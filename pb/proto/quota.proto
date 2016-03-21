@@ -1,0 +1,272 @@
+
+// 礼一数据协议——行情
+
+/*
+4字节    | 2字节    | 2字节    | 16字节     | 
+Uint_32  | Uint_16  | Uint_16  | binary     | binary
+包体长度 | 系统区号 | 包子类型 | requesetId | 包体
+*/
+
+package ly.quota;
+
+message MarketInfo
+{
+  required int32  exchid         = 1;   // 市场标志
+  required string market         = 2;   // 市场名称
+}
+
+message MarketList
+{
+  repeated MarketInfo mk_list    = 1;
+}
+
+//请求代码列表(LYMK_CODETABLE_REQ)
+message CodeTableReq
+{
+  required int32 exchid           = 1;   // 市场标志
+  // 0 "SZ"
+  // 1 "SH"
+  // 10 "CF"
+  // 11 "SHF"
+  // 12 "CZC"
+  // 13 "DCE"
+}
+
+message CodeTableChange
+{
+  required int32 exchid           = 1;   // 市场标志
+  // 0 "SZ"
+  // 1 "SH"
+  // 10 "CF"
+}
+
+//增加代码索引通知(LYMK_CODETABLE_ADD)
+message SecurityCode
+{
+  required int32  idnum       = 1;        //本日编号(交易所编号*100 + 交易所编号)
+  required int32  type        = 2;        //证券类型
+                //0x80000000 正股(有权证的股票)
+                //  0x00 指数
+                //  0x10 股票
+                //  0x20 基金
+                //  0x30 债券 & 可转债
+                //  0x40 回购
+                //  0x60 权证
+                //  0x70 期货
+                //  0x80 外汇
+                //  0xd0 银行利率
+                //  0xe0 贵金属(noble metal)
+                //  0xf0 其他
+                //  详细类型(type 位与 0xFF)
+                //  0x01 交易所指数
+                //  0x03 亚洲指数
+                //  0x04 国际指数
+                //  0x05 系统分类指数
+                //  0x06 用户分类指数
+                //  0x08 指数现货
+                //  0x10 A股
+                //  0x11 中小板股
+                //  0x12 创业板股
+                //  0x16 B股
+                //  0x17 H股(在香港上市的A股，为上海Level2行情H股增加)
+                //  0x1a US
+                //  0x1b US ADR
+                //  0x1e 扩展板块股票(港)
+                //  0x20 基金
+                //  0x21 未上市开放基金
+                //  0x22 上市开放基金
+                //  0x23 交易型开放式指数基金
+                //  0x25 扩展板块基金(港)
+                //  0x30 政府债券
+                //  0x31 企业债券
+                //  0x32 金融债券
+                //  0x33 可转债券
+                //  0x40 国债回购
+                //  0x41 企债回购
+                //  0x60 权证
+                //  0x61 认购权证
+                //  0x62 认沽权证
+                //  0x64 认购权证(B股)
+                //  0x65 认沽权证(B股)
+                //  0x66 牛证（moo-cow）
+                //  0x67 熊证（bear）
+                //  0x70 指数期货
+                //  0x71 商品期货
+                //  0x72 股票期货
+                //  0x73 同业拆借利率期货
+                //  0x74 Exchange Fund Note Futures
+                //  0x78 指数期货连线CX
+                //  0x79 指数期货连线CC
+                //  0x7a 商品期货连线CX
+                //  0x7b 商品期货连线CC
+                //  0x7c 股票期货连线CX
+                //  0x7d 股票期货连线CC
+                //  0x80 基本汇率
+                //  0x81 交叉汇率
+                //  0x82 反向汇率
+                //  0xd0 银行利率
+                //  0xd1 银行利率(HK)
+                //  0xd2 银行利率(Interal)
+                //  0xe0 贵金属(noble metal)
+                //  0xf0 其他
+                //  0xf1 A股新股申购
+                //  0xf2 A股增发
+  required string security_code  = 3;    //证券代码
+  required string symbol        = 4;    //证券名称
+};
+
+//2.代码列表响应(LYMK_CODETABLE_RESP)
+message SecurityCodeResp
+{
+  required int32 source             = 1;  //交易所 0:SZ 1:SH 10:CF 11:SHFE
+  required int32 date               = 2;  //数据日期(YYYYMMDD)
+  required int32 count              = 3;  //数据总数(-1:未授权)
+  required int32 flags              = 4;  //(保留)
+  repeated SecurityCode security_code_list  = 5;
+}
+
+//3.订阅行情数据(通过证卷类型订阅)
+message MarketDataReqByMdType
+{
+  required uint32 sub_type  = 1;  //订阅行情方式：
+              //  0：取消订阅
+              //  1：增加订阅
+  required uint32 mk_type    = 2;  //订阅行情的类型：
+              //  盘口行情数据
+              //  成交   
+              //  成交扩展
+              //  队列  
+              //  期货行情数据 , CTP也提供
+              //  指数  
+}
+
+//订阅行情数据(通过本日编号)
+message MarketDataReqByIdnum
+{
+	required uint32 sub_type  = 1;  //订阅行情方式：
+              //  0：取消订阅
+              //  1：增加订阅
+  repeated int32 idnum     = 2;  // 本日编号
+}
+
+//5.行情数据，行情快照（盘口,LYMK_MARKETDATA）
+message MarketData
+{
+  required int32  idnum        = 1;          //本日编号
+  required int32  time          = 2;          //时间(HHMMSSmmm)
+  required int32  status        = 3;          //状态
+  required uint32 pre_close      = 4;      //前收盘价
+  required uint32 open          = 5;        //开盘价
+  required uint32 high          = 6;        //最高价
+  required uint32 low          = 7;        //最低价
+  required uint32 match        = 8;        //最新价
+  repeated uint32 ask_price      = 9  [packed=true];    //申卖价1-10
+  repeated uint32 ask_vol        = 10 [packed=true];    //申卖量1-10
+  repeated uint32 bid_price      = 11 [packed=true];    //申买价1-10
+  repeated uint32 bid_vol       = 12 [packed=true];    //申买量1-10
+  required uint32 num_trades    = 13;        //成交笔数
+  required int64  volume        = 14;        //成交总量
+  required int64  turnover      = 15;        //成交总金额
+  required int64  total_bid_vol  = 16;        //委托买入总量
+  required int64  total_ask_vol  = 17;        //委托卖出总量
+  required uint32 weighted_avg_bid_price  = 18;  //加权平均委买价格
+  required uint32 weighted_avg_ask_price  = 19; //加权平均委卖价格
+  required int32  iopv                  = 20;      //IOPV净值估值
+  required int32  yield_to_maturity      = 21;      //到期收益率
+  required uint32 high_limited          = 22;      //涨停价
+  required uint32 low_limited            = 23;      //跌停价
+  required int32  stat              = 24;     // ‘H’:涨停 ‘L’:跌停 ‘S’:停牌 ‘N’:正常,新增
+  required int32  pub_time            = 25;      // 服务器发布的时间（HHMMSSmmm）,新增
+  required int64  now_volume              = 26;      // 现成交量,新增
+  required int64  now_value              = 27;      // 现成交额,新增
+}
+
+//6.指数，指数快照(LYMK_INDEX)
+message IndexData
+{
+  required int32  idnum        = 1;    //本日编号
+  required int32  time          = 2;    //时间(HHMMSSmmm)
+  required int32  open_index    = 3;    //今开盘指数
+  required int32  high_index    = 4;    //最高指数
+  required int32  low_index      = 5;    //最低指数
+  required int32  last_index    = 6;    //最新指数
+  required int64  total_volume  = 7;    //参与计算相应指数的交易数量
+  required int64  turnover      = 8;    //参与计算相应指数的成交金额
+  required int32  pre_close_index= 9;    //前盘指数
+  required int32  pub_time    = 10;    // 服务器发布的时间（HHMMSSmmm）,新增
+}
+
+//7.期货,期货快照(LYMK_FUTURE)
+message MarketDataFutures
+{
+  required int32  idnum            = 1;        //本日编号
+  required int32  time             = 2;        //时间(HHMMSSmmm)  
+  required int32  status           = 3;        //状态
+  required int64  pre_open_interest = 4;        //昨持仓
+  required uint32 pre_close         = 5;        //昨收盘价
+  required uint32 pre_settle_price  = 6;        //昨结算
+  required uint32 open             = 7;        //开盘价  
+  required uint32 high             = 8;        //最高价
+  required uint32 low              = 9;        //最低价
+  required uint32 last             = 10;        //最新价
+  required int64  volume           = 11;        //成交总量
+  required int64  turnover         = 12;        //成交总金额
+  required int64  open_interest     = 13;        //持仓总量
+  required uint32 close             = 14;        //今收盘
+  required uint32 settle_price      = 15;        //今结算
+  required uint32 high_limited      = 16;        //涨停价
+  required uint32 low_limited       = 17;        //跌停价
+  required int32  pre_delta         = 18;        //昨虚实度
+  required int32  curr_delta        = 19;       //今虚实度
+  repeated uint32 ask_price         = 20 [packed=true];      //申卖价
+  repeated uint32 ask_vol           = 21 [packed=true];      //申卖量
+  repeated uint32 bid_price         = 22 [packed=true];      //申买价
+  repeated uint32 bid_vol           = 23 [packed=true];      //申买量
+  optional uint32 average_price     = 24;        // 当日均价
+  required int32  pub_time          = 25;        // 服务器发布的时间（HHMMSSmmm）,新增
+}
+
+//8.成交(LYMK_TRANSACTION)
+message Transaction
+{
+  required int32  idnum      = 1;    //本日编号
+  required int32  time       = 2;    //成交时间(HHMMSSmmm)
+  required int32  index      = 3;    //成交编号
+  required int32  price      = 4;    //成交价格
+  required int32  volume     = 5;    //成交数量
+  required int32  turnover   = 6;    //成交金额
+  required int32  pub_time   = 7;     //服务器发布的时间（HHMMSSmmm）,新增
+}
+
+message TransactionExItem {
+	optional int32   time            = 1;     //成交时间(HHMMSSmmm)
+	optional int32   trade_no        = 2;     //成交编号
+	optional int32   price           = 3;     //成交价格
+	optional int32   volume          = 4;     //成交数量
+	optional int32   turnover        = 5;     //成交金额
+	optional int32   bs_flag         = 6;     //买卖方向(买：'B', 卖：'S', 不明：' ')
+	optional int32   order_kind      = 7;     //成交类别
+	optional int32   function_code   = 8;     //成交代码
+	optional int32   ask_order       = 9;     //叫卖方委托序号
+	optional int32   bid_order       = 10;    //叫买方委托序号
+}
+
+// 逐笔成交扩展(LYMK_TRANSACTION_EX)
+message TransactionEx {
+  optional int32  idnum           = 1;      //本日编号
+  optional int32  count           = 2;      //数据个数据
+  optional int32  pub_time        = 3;       //服务器发布的时间（HHMMSSmmm）,新增
+  repeated TransactionExItem items  = 4; 
+}
+
+//9.订单队列(LYMK_ORDERQUEUE)
+message OrderQueue
+{
+  required int32   idnum      = 1;    //本日编号
+  required int32   time      = 2;    //订单编号(HHMMSSmmm)
+  required int32   side      = 3;    //买卖方向('B':Bid 'A':Ask)
+  required int32   price      = 4;    //成交价格
+  required int32   orders      = 5;    //订单数量
+  repeated int32   volumes    = 6;    //订单明细 
+  required int32   pub_time    = 7;    // 服务器发布的时间（HHMMSSmmm）,新增
+}

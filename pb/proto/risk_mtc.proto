@@ -1,0 +1,120 @@
+//MTC模块风控相关参数设置
+package risk_mtc;
+//MTC单位时间保单速度和金额风控参数设置
+message mtc_order_set_info
+{
+  optional uint32 spot_order_count_second = 1;  //单笔现货每多少秒
+  optional uint32 spot_order_count_most = 2;  //单笔现货每多少秒，最多报单多少笔
+  optional uint32 all_future_order_count_second = 3;    //所有期货，每多少秒
+  optional uint32 all_future_order_count_most = 4;    //所有期货每多少秒，最多报单多少笔 
+  optional uint32 stock_buy_order_amount_second= 5;   //个股买入，每多少秒
+  optional string stock_buy_order_amount_most = 6;    //个股买入，每多少秒，最多可买入多少元
+  optional uint32 stock_sell_order_amount_second= 7;   //个股卖出，每多少秒
+  optional string stock_sell_order_amount_sell = 8;    //个股卖出，每多少秒，最多可卖出多少元
+  optional uint32 fund_order_amount_second = 9;           //基金报单，每多少秒
+  optional string fund_order_amount_most = 10;            //基金报单，每多少秒，最多可报单多少元
+  optional uint32 basket_order_amount_second = 11;              //篮子报单，每多少秒
+  optional string basket_order_amount_most = 12;         //篮子报单，每多少秒，最多可报单多少元
+  optional uint32 repo_order_amount_second = 13;       //逆回购报单，每多少秒
+  optional string repo_order_amount_most = 14;         //逆回购报单，每多少秒，最多可报单多少元
+  optional uint32 all_future_order_volume_second = 15;        //所有期货，每多少秒
+  optional uint32 all_future_order_volume_most = 16;            //所以期货每多少秒，最多可报单多少张
+  optional uint32 IF_future_order_volume_second = 17;        //IF期货，每多少秒
+  optional uint32 IF_future_order_volume_most = 18;            //IF期货每多少秒，最多可报单多少张
+  optional uint32 IC_future_order_volume_second = 19;        //IC期货，每多少秒
+  optional uint32 IC_future_order_volume_most = 20;            //IC期货每多少秒，最多可报单多少张
+  optional uint32 IH_future_order_volume_second = 21;        //IH期货，每多少秒
+  optional uint32 IH_future_order_volume_most = 22;            //IH期货每多少秒，最多可报单多少张
+};
+
+//MTC相关风控参数设置请求 
+message MTC_Order_Set_Req
+{
+  required mtc_order_set_info  mtc_order = 1; 
+};
+//MTC相关风控参数设置返回
+message MTC_Order_Set_Resp
+{
+  required int32 ret_code = 1;  //0表示返回操作成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+};
+//返回查询MTC相关风控参数历史设置信息
+message MTC_Order_Query_Info
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional mtc_order_set_info  mtc_order = 2;  // 返回历史设置信息,第一次返回没有值
+  optional string msg = 3;      //当返回有错误的时候，填充错误信息   
+};
+
+
+//MTC界面报单按钮操作频率参数设置
+message mtc_dec_button_info
+{
+  optional uint32 stock_ui_buy_second = 1;   //股票买卖界面，“买入按钮”,每多少秒
+  optional uint32 stock_ui_buy_click = 2;   //股票买卖界面，“买入”按钮，最多可点击多少次
+  optional uint32 stock_ui_sell_second = 3;   //股票买卖界面，“卖出按钮”,每多少秒
+  optional uint32 stock_ui_sell_click = 4;   //股票买卖界面，“卖出”按钮，最多可点击多少次
+  optional uint32 basket_ui_buy_second = 5;  //“篮子买入”,按钮，每多少秒
+  optional uint32 basket_ui_buy_click = 6;   //"篮子买入"按钮，最多可点击多少次    
+  optional uint32 basket_ui_sell_second = 7;  //“篮子卖出”,按钮，每多少秒
+  optional uint32 basket_ui_sell_click = 8;   //"篮子卖出"按钮，最多可点击多少次    
+  optional uint32 basket_ui_withdraw_second = 9;  //“ 撤单”按钮,每多少秒
+  optional uint32 basket_ui_withdraw_click = 10;  //“撤单”按钮，最多可点击多少次
+  optional uint32 basket_ui_reorder_second = 11;   //"补单"按钮，每多少秒
+  optional uint32 basket_ui_reorder_click = 12;    //"补单"按钮，最多可点击多少次
+  optional uint32 basket_ui_auto_reorder_second = 13; //"自动撤补"按钮,每多少秒
+  optional uint32 basket_ui_auto_reorder_click = 14; //"自动撤补"按钮,最多可点击多少次
+  optional uint32 basket_ui_create_second = 15;         //"申购"按钮,每多少秒
+  optional uint32 basket_ui_create_click = 16;          //"申购"按钮,最多可点击多次次
+  optional uint32 fast_ui_buy_second = 17;         //快速申赎界面"买入"按钮，每多少秒
+  optional uint32 fast_ui_buy_click = 18;          //快速申赎界面"买入"按钮,最多可点击多少次
+  optional uint32 fast_ui_sell_second = 19;         //快速申赎界面"卖出"按钮，每多少秒
+  optional uint32 fast_ui_sell_click = 20;          //快速申赎界面"卖出"按钮,最多可点击多少次
+  optional uint32 fast_ui_fast_redeem_second = 21;         //快速申赎界面"快赎"按钮，每多少秒
+  optional uint32 fast_ui_fast_redeem_click = 22;          //快速申赎界面"快赎"按钮，最多可点击多少次
+  optional uint32 fast_ui_redeem_and_sell_second = 23;         //快速申赎界面"赎+卖"按钮，每多少秒
+  optional uint32 fast_ui_redeem_and_sell_click = 24;          //快速申赎界面"赎+卖"按钮，最多可点击多少次
+  optional uint32 fast_ui_redeem_second = 25;              //快速申赎界面"赎回"按钮,每多少秒
+  optional uint32 fast_ui_redeem_click = 26;               //快速申赎界面"赎回"按钮,最多可点击多少次
+  optional uint32 fast_ui_basket_sell_second = 27;        //快速申赎界面"卖篮子",每多少秒
+  optional uint32 fast_ui_basket_sell_click = 28;         //快速申赎界面"卖篮子",最多可点击
+  optional uint32 fast_ui_fast_create_second = 29;         //快速申赎界面"快申",每多少秒
+  optional uint32 fast_ui_fast_create_click = 30;         //快速申赎界面"快申",最多可点击多少次
+  optional uint32 fast_ui_buy_and_create_second = 31;         //快速申赎界面"买+申",每多少秒
+  optional uint32 fast_ui_buy_and_create_click = 32;          //快速申赎界面"买+申",最多可点击多少次
+  optional uint32 fast_ui_create_second = 33;            //快速申赎界面"申购",每多少秒
+  optional uint32 fast_ui_create_click = 34;             //快速申赎界面"申购",最多可点击多少次
+  optional uint32 fast_ui_basket_buy_second = 35;        //快速申赎界面"买篮子",每多少秒
+  optional uint32 fast_ui_basket_buy_click = 36;         //快速申赎界面"买篮子",最多可点击
+  optional uint32 order_ui_withdraw_second = 37;          //现货委托 "撤单"按钮,每多少秒
+  optional uint32 order_ui_withdraw_click = 38;           //现货委托 "撤单"按钮,最多可点击多少次
+  optional uint32 order_ui_withdraw_all_sell_second = 39;  //现货委托界面"卖单全撤"，每多少秒
+  optional uint32 order_ui_withdraw_all_sell_click = 40;   //现货委托界面"卖单全撤",最多可点击多少次
+  optional uint32 order_ui_withdraw_all_buy_second = 41;  //现货委托界面"买单全撤"，每多少秒
+  optional uint32 order_ui_withdrwa_all_buy_click = 42;   //现货委托界面"买单全撤",最多可点击多少次
+  optional uint32 future_ui_withdraw_second = 43;   //期货委托界面"撤单"按钮，每多少秒
+  optional uint32 future_ui_withdraw_click = 44;    //期货委托界面"撤单"按钮，最多可点击多少次
+  optional uint32 future_ui_withdraw_all_order_second = 45;          //期货委托 "全部撤单"按钮,每多少秒
+  optional uint32 future_ui_withdraw_all_order_click = 46;           //期货委托 "全部撤单"按钮,最多可点击多少次 
+};
+
+//MTC界面报单按钮设置请求 
+message MTC_Dec_Button_Req
+{
+  required mtc_dec_button_info mtc_button = 1;
+};
+
+//MTC界面报单按钮设置返回 
+message MTC_Dec_Button_Resp
+{
+  required int32 ret_code = 1;  //0表示返回操作成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+};
+
+//MTC界面报单按钮查询返回
+message MTC_Button_Query_Info
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional mtc_dec_button_info  mtc_button = 2;  // 返回历史设置信息,第一次返回没有值
+  optional string msg = 3;      //当返回有错误的时候，填充错误信息   
+};

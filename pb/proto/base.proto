@@ -1,0 +1,404 @@
+
+// package base;
+
+enum base_version
+{
+    MAJOR                               = 0;
+    MINOR                               = 1;
+}
+
+enum market_id
+{
+    MKT_SZ                          = 0;
+    MKT_SH                          = 1;
+    MKT_CF                          = 10;
+}
+
+enum const_value
+{
+    HEADER_SIZE                     = 24;
+    MAX_PACK                        = 1024000;
+    MAX_BATCH                       = 15;
+}
+
+enum sys_id
+{
+  SYS_STOCK                       = 0x0002;
+  SYS_FUTURE                      = 0x0003;
+  SYS_LOGIC                       = 0x0004;
+  SYS_RISK_MONITOR                = 0x0088;
+  SYS_MTC                         = 0x0010;
+  SYS_ATC                         = 0x0011;
+  SYS_ABA                         = 0x0013;
+  SYS_ROBOT                       = 0X0014;
+  SYS_RISK                        = 0x0015;
+  SYS_VERIFY                      = 0x0016; //授权验证
+  SYS_QUOTATION                   = 0x8001;
+  SYS_BASIS                       = 0x000a; //基差服务系统区号
+  SYS_MONITOR                     = 0x7001;
+}
+
+enum command_id
+{
+    CMD_LOGIN_REQ                       = 0x0001;  //  登录
+    CMD_LOGIN_RESP                      = 0x8001;  //  登录 应答
+    CMD_SINGLE_ORDER_REQ                = 0x0002;  //  单笔下单
+    CMD_SINGLE_ORDER_RESP               = 0x8002;  //  单笔下单应答
+    CMD_SINGLE_WITHDRAWAL_REQ           = 0x0003;  //  单笔撤单
+    CMD_SINGLE_WITHDRAWAL_RESP          = 0x8003;  //  单笔撤单应答
+    CMD_ETF_ORDER_REQ                   = 0x0004;  //  etf 操作申购
+    CMD_ETF_ORDER_RESP                  = 0x8004;  //  etf 操作应答
+    CMD_BATCH_ORDER_REQ                 = 0x0005;  //  批量下单
+    CMD_BATCH_ORDER_RESP                = 0x8005;  //  批量下单应答
+    CMD_BATCH_WITHDRAWAL_REQ            = 0x0006;  //  批量撤单
+    CMD_BATCH_WITHDRAWAL_RESP           = 0x8006;  //  批量撤单应答
+
+	  // Future order definitation
+	  CMD_FUTURE_SINGLE_ORDER_REQ			= 0x0202;	// 期货单笔下单
+	  CMD_FUTURE_SINGLE_ORDER_RESP		= 0x8202;	// 期货单笔下单返回
+	  CMD_FUTURE_SINGLE_WITHDRAWAL_REQ	= 0x0203;	// 期货单笔撤单
+	  CMD_FUTURE_SINGLE_WITHDRAWAL_RESP	= 0x8203;	// 期货单笔撤单返回
+
+    //  OPR_BUY, OPR_SELL, OPR_BASEKET_SUBMIT
+    //  OPR_BASEKET_COMPLETE OPR_BASEKET_AUTO
+    CMD_BASKET_ORDER_REQ                = 0x0007;  //  篮子下单
+    CMD_BASKET_ORDER_RESP               = 0x8007;  //  篮子下单应答
+    CMD_BASKET_WITHDRAWAL_REQ           = 0x0008;  //  篮子撤单
+    CMD_BASKET_WITHDRAWAL_RESP          = 0x8008;  //  篮子撤单应答
+
+    CMD_FUND_ORDER_REQ                  = 0x0009;  //  基金
+    CMD_FUND_ORDER_RESP                 = 0x8009;  //  基金应答
+    CMD_GRADED_FUND_REQ                 = 0x000a;  //  分级基金
+    CMD_GRADED_FUND_RESP                = 0x800a;  //  分级基金应答
+
+///////////////////////////////////////////////////////////////////////////////////
+    CMD_STOP_POLICY                                 = 0x0300;  //  终止策略
+    CMD_PAUSE_POLICY                                = 0x0301;  //  暂停策略
+    CMD_REORDER_POLICY                              = 0x0302;  //  撤补策略
+    CMD_REPLACE_FILL_POLICY                         = 0x0303;  //  替代补足策略
+    CMD_SUBSCRIBE_POLICY_REQ                        = 0x0304;  //  订阅策略
+    CMD_SUBSCRIBE_POLICY_RESP                       = 0x8305;  //  订阅响应
+    CMD_POLICY_STATUS                               = 0x0306;  //  策略状态推送
+
+    CMD_STOCK_POLICY                                = 0x0310;  //  创建单笔现货报单策略
+    CMD_FUTURE_POLICY                               = 0x0311;  //  创建单笔期货报单策略
+    CMD_STOCK_BASKET_POLICY                         = 0x0312;  //  创建篮子买卖策略
+    CMD_STOCK_CREATE_OR_REDEEM_POLICY               = 0x0313;  //  创建股票申赎策略
+    CMD_ETF_BS_OR_RS_POLICY                         = 0x0314;  //  创建ETF买+申、赎+卖策略
+    CMD_ETF_QUICK_POLICY                            = 0x0315;  //  创建ETF快申、快赎策略
+    CMD_ETF_SPREAD_POSITIVE_POLICY                  = 0x0316;  //  创建ETF基差正向策略
+
+    CMD_STRUCTURED_FUND_LINK_POLICY                 = 0x0320;  //  创建分级基金联动策略
+    CMD_STRUCTURED_FUND_AB_POLICY                   = 0x0321;  //  创建分级基金A+B买卖策略
+    CMD_STRUCTURED_FUND_SPLIT_OR_MERGE_POLICY       = 0x0322;  //  创建分级基金拆分、合并策略
+    CMD_STRUCTURED_FUND_BM_OR_SS_POLICY             = 0x0323;  //  创建分级基金买+合、拆+卖策略
+    CMD_STRUCTURED_FUND_QUICK_POLICY                = 0x0324;  //  创建分级基金快合、快拆策略
+
+///////////////////////////////////////////////////////////////////////////////////
+
+
+    CMD_ASSET_REQ                       = 0x000c;  //  现金
+    // CMD_ASSET_RESP                      = 0x800c;  //  现金应答
+    CMD_STOCK_POSITION_REQ              = 0x000d;  //  现货
+    // CMD_STOCK_POSITION_RESP             = 0x800d;  //  现货应答
+    CMD_STOCK_ORDER_REQ                 = 0x000e;  //  现货委托回报
+    // CMD_STOCK_ORDER_RESP                = 0x800e;  //  现货委托回报应答
+    CMD_STOCK_KNOCK_REQ                 = 0x000f;  //  现货成交回报
+    // CMD_STOCK_KNOCK_RESP                = 0x800f;  //  现货成交回报应答
+    CMD_FUTURE_ORDER_REQ                = 0x0010;  //  现货委托回报
+    // CMD_FUTURE_ORDER_RESP               = 0x8010;  //  现货委托回报应答
+    CMD_FUTURE_KNOCK_REQ                = 0x0011;  //  现货成交回报
+    // CMD_FUTURE_KNOCK_RESP               = 0x8011;  //  现货成交回报应答
+    CMD_BASKET_CUSTOM_REQ               = 0x0012;  //  篮子下单
+    CMD_BASKET_CUSTOM_RESP              = 0x8012;  //  篮子下单应答
+
+    CMD_QUERY_ASSET_REQ                 = 0x0021;  //  查询现金(期货通用)
+    CMD_QUERY_ASSET_RESP                = 0x8021;  //  查询现金应答(期货通用)
+    CMD_QUERY_STOCK_POSITION_REQ        = 0x0022;  //  查询现货
+    CMD_QUERY_STOCK_POSITION_RESP       = 0x8022;  //  查询现货应答
+    CMD_QUERY_STOCK_ORDER_REQ           = 0x0023;  //  查询现货委托
+    CMD_QUERY_STOCK_ORDER_RESP          = 0x8023;  //  查询现货委托应答
+    CMD_QUERY_STOCK_KNOCK_REQ           = 0x0024;  //  查询现货成交明细
+    CMD_QUERY_STOCK_KNOCK_RESP          = 0x8024;  //  查询现货成交明细应答
+    CMD_QUERY_FUTURE_POSITION_REQ       = 0x0025;  //  查询期货持仓
+    CMD_QUERY_FUTURE_POSITION_RESP      = 0x8025;  //  查询期货持仓应答
+    CMD_QUERY_FUTURE_ORDER_REQ          = 0x0026;  //  查询期货委托
+    CMD_QUERY_FUTURE_ORDER_RESP         = 0x8026;  //  查询期货委托应答
+    CMD_QUERY_FUTURE_KNOCK_REQ          = 0x0027;  //  查询期货成交明细
+    CMD_QUERY_FUTURE_KNOCK_RESP         = 0x8027;  //  查询期货成交明细应答
+    CMD_QUERY_ETF_PURDEEM_REQ           = 0x0028;  //  查询etf 可申购赎回数
+    CMD_QUERY_ETF_PURDEEM_RESP          = 0x8028;  //  查询etf 可申购赎回数应答
+    CMD_QUERY_FUTURE_INSTRUMENT_REQ     = 0x0029;  //  查询期货合约信息
+    CMD_QUERY_FUTURE_INSTRUMENT_RESP    = 0x8029;  //  查询期货合约信息应答
+
+    CMD_SUBSCRIBE_TRADE_REQ             = 0x0030;  //  订阅  subscribe_push_type
+    CMD_SUBSCRIBE_TRADE_RESP            = 0x8030;  //  订阅应答
+    CMD_SUB_ASSET_REQ                   = 0x0031;  //  订阅现金(资金推送)
+    // CMD_SUB_ASSET_RESP                  = 0x8031;  //  订阅现金应答
+    CMD_SUB_STOCK_POSITION_REQ          = 0x0032;  //  订阅现货(订阅现货推送消息)
+    // CMD_SUB_STOCK_POSITION_RESP         = 0x8032;  //  订阅现货应答
+    CMD_SUB_STOCK_ORDER_REQ             = 0x0033;  //  订阅现货委托回报(订阅委托推送消息)
+    // CMD_SUB_STOCK_ORDER_RESP            = 0x8033;  //  订阅现货委托回报应答
+    CMD_SUB_STOCK_KNOCK_REQ             = 0x0034;  //  订阅现货成交回报(订阅成交推送消息)
+    // CMD_SUB_STOCK_KNOCK_RESP            = 0x8034;  //  订阅现货成交回报应答
+    CMD_SUBSCRIBE_FUTURE_REQ            = 0x0035;  //  期货交易信息订阅
+    CMD_SUBSCRIBE_FUTURE_RESP           = 0x8035;  //  期货交易信息响应
+    CMD_FUTURE_PUSH_ASSET                      = 0x0036;  //  [期货]单笔资金推送
+    CMD_FUTURE_PUSH_ORDER                      = 0x0037;  //  [期货]单笔委托推送
+    CMD_FUTURE_PUSH_POSITION                   = 0x0038;  //  [期货]单笔持仓推送
+    CMD_FUTURE_PUSH_KNOCK                      = 0x0039;  //  [期货]单笔成交推送
+    CMD_FUTURE_PUSH_MULTI_ORDER                = 0x0040;  //  [期货]全量委托推送(刚订阅时全量推)
+    CMD_FUTURE_PUSH_MULTI_POSITION             = 0x0041;  //  [期货]全量持仓推送
+    CMD_FUTURE_PUSH_MULTI_KNOCK                = 0x0042;  //  [期货]全量成交推送
+    CMD_PUSH_MULTI_INSTRUMENT                  = 0x0043;  //  [期货]全量合约信息推送
+
+
+
+    CMD_INNER_QUERY_ASSET_REQ           = 0x0050;  //  内部查询现金
+    CMD_INNER_QUERY_ASSET_RESP          = 0x8050;  //  内部查询现金应答
+    CMD_INNER_QUERY_STOCK_POSITION_REQ  = 0x0051;  //  内部查询现货
+    CMD_INNER_QUERY_STOCK_POSITION_RESP = 0x8051;  //  内部查询现货应答
+    CMD_INNER_QUERY_STOCK_ORDER_REQ     = 0x0052;  //  内部查询现货委托
+    CMD_INNER_QUERY_STOCK_ORDER_RESP    = 0x8052;  //  内部查询现货委托应答
+    CMD_INNER_QUERY_STOCK_KNOCK_REQ     = 0x0053;  //  内部查询现货成交明细
+    CMD_INNER_QUERY_STOCK_KNOCK_RESP    = 0x8053;  //  内部查询现货成交明细应答
+    CMD_INNER_QUERY_STOCK_UNKNOCK_REQ   = 0x0054;  //  内部查询现货未完成
+    CMD_INNER_QUERY_STOCK_UNKNOCK_RESP  = 0x8054;  //  内部查询现货未完成
+
+    CMD_SUB_ETF_INFO_REQ                = 0x0071;  //
+    CMD_SUB_ETF_INFO_RESP               = 0x8071;
+    CMD_SUB_CUSTOM_BASIS_REQ            = 0x0072;
+    CMD_SUB_CUSTOM_BASIS_RESP           = 0x8072;
+
+
+    CMD_SUB_ETF_INFO_LIMIT_UP_REQ       = 0x0073;  // 涨停市值
+    CMD_SUB_ETF_INFO_LIMIT_DOWN_REQ     = 0x0074;  // 跌停市值
+    CMD_SUB_ETF_INFO_STOP_REQ           = 0x0075;  // 停牌市值
+    CMD_SUB_ETF_INFO_MAXPRICE_REQ       = 0x0076;  // 最高买入价
+    CMD_SUB_ETF_INFO_MINPRICE_REQ       = 0x0077;  // 最低卖出价 //
+    CMD_SUB_ETF_INFO_DIOPV_B1_REQ       = 0x0078;  // diopvB1  卖一价计算iopv
+    CMD_SUB_ETF_INFO_DIOPV_S1_REQ       = 0x0079;  // diopvS1  买一价计算iopv
+
+    CMD_SUB_ETF_INFO_BASIS_B1_REQ       = 0x007a;  // 买一基差
+    CMD_SUB_ETF_INFO_BASIS_S1_REQ       = 0x007b;  // 卖一基差
+    CMD_SUB_ETF_INFO_BASIS_OPEN_REQ     = 0x007c;  // 开仓基差
+    CMD_SUB_ETF_INFO_BASIS_CLOSE_REQ    = 0x007d;  // 平仓基差
+
+    // [独立风控]
+    CMD_WITHDRAWAL_ALL_REQ              = 0x000b;  //  全撤
+    CMD_WITHDRAWAL_ALL_RESP             = 0x800b;  //  全撤
+
+    CMD_SET_ACCOUNT_PRIVILEGE_REQ       = 0x0101;  //  设置资金账户买卖权限
+    CMD_SET_ACCOUNT_PRIVILEGE_RESP      = 0x8101;
+
+    CMD_QUERY_ACCOUNT_PRIVILEGE_REQ     = 0x0102;  //  查询资金账户买卖权限
+    CMD_QUERY_ACCOUNT_PRIVILEGE_RESP    = 0x8102;
+
+    CMD_SET_TRADER_PRIVILEGE_REQ        = 0x0103;  //  设置交易员买卖权限
+    CMD_SET_TRADER_PRIVILEGE_RESP       = 0x8103;
+
+    CMD_QUERY_TRADER_PRIVILEGE_REQ      = 0x0104;  //  查询交易员买卖权限
+    CMD_QUERY_TRADER_PRIVILEGE_RESP     = 0x8104;
+
+    CMD_SUBSCRIBE_RISK_REQ                  = 0x0402;  // 订阅(风控服务器相关数据,参考risk_trade_client.proto里面)
+    CMD_SUBSCRIBE_RISK_RESP                 = 0x8402;  // 订阅应答
+    CMD_SET_MTC_PARAM_REQ                   = 0x0403;  //MTC相关风控参数设置请求
+    CMD_SET_MTC_PARAM_RESP                  = 0x8403;  //MTC相关风控参数设置返回
+    CMD_QUERY_MTC_PARAM_REQ                 = 0x0404;  //MTC相关风控参数查询请求
+    CMD_QUERY_MTC_PARAM_RESP                = 0x8404;  //MTC相关风控参数查询返回
+    CMD_SET_MTC_BUTTON_REQ                  = 0x0405;  //MTC界面报单按钮设置请求
+    CMD_SET_MTC_BUTTON_RESP                 = 0x8405;  //MTC界面报单按钮设置返回
+    CMD_QUERY_MTC_BUTTON_REQ                = 0x0406;  //MTC界面报单按钮查询请求
+    CMD_QUERY_MTC_BUTTON_RESP               = 0x8406;  //MTC界面报单按钮查询返回
+    CMD_SET_ATC_PARAM_REQ                   = 0x0407;  //ATC风控参数设置请求
+    CMD_SET_ATC_PARAM_RESP                  = 0x8407;  //ATC风控参数设置返回
+    CMD_QUERY_ATC_PARAM_REQ                 = 0x0408;  //ATC风控参数查询请求
+    CMD_QUERY_ATC_PARAM_RESP                = 0x8408;  //ATC风控参数查询返回
+    CMD_SET_ATC_BUTTON_REQ                  = 0x0409;  //ATC界面交易按钮设置请求
+    CMD_SET_ATC_BUTTON_RESP                 = 0x8409;  //ATC界面交易按钮设置返回
+    CMD_QUERY_ATC_BUTTON_REQ                = 0x0410;  //ATC界面交易按钮查询请求
+    CMD_QUERY_ATC_BUTTON_RESP               = 0x8410;  //ATC界面交易按钮查询返回
+    CMD_SET_STOCK_PARAM_REQ                 = 0x0411;  //风控服务器现货风控参数设置请求
+    CMD_SET_STOCK_PARAM_RESP                = 0x8411;  //风控服务器现货风控参数设置返回
+    CMD_QUERY_STOCK_PARAM_REQ               = 0x0412;  //风控服务器现货风控参数查询请求
+    CMD_QUERY_STOCK_PARAM_RESP              = 0x8412;  //风控服务器现货风控参数查询返回
+    CMD_SET_FUTURE_PARAM_REQ                = 0x0413;  //风控服务器期货风控参数设置请求
+    CMD_SET_FUTURE_PARAM_RESP               = 0x8413;  //风控服务器期货风控参数设置返回
+    CMD_QUERY_FUTURE_PARAM_REQ              = 0x0414;  //风控服务器期货风控参数查询请求
+    CMD_QUERY_FUTURE_PARAM_RESP             = 0x8414;  //风控服务器期货风控参数查询返回
+    CMD_SET_INDEPENDENT_CONTROL_REQ         = 0x0415;  //独立风控界面参数设置请求
+    CMD_SET_INDEPENDENT_CONTROL_RESP        = 0x8415;  //独立风控界面参数设置返回
+    CMD_QUERY_INDEPENDENT_CONTROL_REQ       = 0x0416;  //独立风控界面参数查询请求
+    CMD_QUERY_INDEPENDENT_CONTROL_RESP      = 0x8416;  //独立风控界面参数查询返回
+    CMD_GET_PRODUCT_INFO_REQ                = 0x0417;  //禁卖禁买界面,获取产品信息请求
+    CMD_GET_PRODUCT_INFO_RESP               = 0x8417;  //禁卖禁买界面,获取产品信息返回
+    CMD_GET_PRODUCT_BAN_BUYSELL_LIST_REQ    = 0x0418;  //禁卖禁买界面,获取某个产品下禁卖禁买清单请求
+    CMD_GET_PRODUCT_BAN_BUYSELL_LIST_RESP   = 0x8418;  //禁卖禁买界面,获取某个产品下禁卖禁买清单返回
+    CMD_SET_STOCK_BAN_BUYSELL_ADD_REQ       = 0x0419;  //禁卖禁买界面设置,添加请求
+    CMD_SET_STOCK_BAN_BUYSELL_ADD_RESP      = 0x8419;  //禁卖禁买界面设置,添加返回
+    CMD_SET_STOCK_BAN_BUYSELL_DEL_REQ       = 0x0420;  //禁卖禁买界面设置,删除请求
+    CMD_SET_STOCK_BAN_BUYSELL_DEL_RESP      = 0x8420;  //禁卖禁买界面设置,删除返回
+    CMD_SET_TRADE_CLIENT_PARAM_REQ          = 0x0421;  //交易客户端统一配置参数,设置请求
+    CMD_SET_TRADE_CLIENT_PARAM_RESP         = 0x8421;  //交易客户端统一配置参数,设置返回
+    CMD_QUERY_TRADE_CLIENT_PARAM_REQ        = 0x0422;  //交易客户端统一配置参数查询请求
+    CMD_QUERY_TRADE_CLIENT_PARAM_RESP       = 0x8422;  //交易客户端统一配置参数查询返回
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    CMD_QUERY_VERIFY_PRODUCT_REQ            = 0x0423;  //(授权服务器)查询产品与现货、期货、资金账号信息请求
+    CMD_QUERY_VERIFY_PRODUCT_RESP           = 0x8423;  //(授权服务器)查询产品与现货、期货、资金账号信息应答
+    CMD_MTC_LOGIN_REQ                       = 0x0424;  //手工客户端登录验证
+    CMD_MTC_LOGIN_RESP                      = 0x8424;  //手工客户端登录应答
+    CMD_QUERY_PRODUCT_GROUP_REQ             = 0x0425;  //获取产品组信息请求
+    CMD_QUERY_PRODUCT_GROUP_RESP            = 0x8425;  //获取产品组信息应答
+    CMD_QUERY_CODE_NUMBER_REQ               = 0x0426;  //常用代码对应的数量查询请求
+    CMD_QUERY_CODE_NUMBER_RESP              = 0x8426;  //常用代码对应的数量请求应答
+    CMD_SET_CODE_NUMBER_REQ                 = 0x0427;  //常用代码设置请求
+    CMD_SET_CODE_NUMBER_RESP                = 0x8427;  //常用代码设置应答
+    CMD_QUERY_LAYOUT_REQ                    = 0x0428;  //界面布局查询请求
+    CMD_QUERY_LAYOUT_RESP                   = 0x8428;  //界面布局查询应答
+    CMD_SET_LAYOUT_REQ                      = 0x0429;  //界面布局设置请求
+    CMD_SET_LAYOUT_RESP                     = 0x8429;  //界面布局设置应答
+    CMD_QUERY_TRADER_RIGHTS_REQ             = 0x0430;  //交易权限查询请求
+    CMD_QUERY_TRADER_RIGHTS_RESP            = 0x8430;  //交易权限查询请求
+    CMD_QUERY_KEY_REQ                       = 0x0431;  //查询快捷键信息请求
+    CMD_QUERY_KEY_RESP                      = 0x8431;  //查询快捷键信息请求
+    CMD_SET_KEY_REQ                         = 0x0432;  //设置交易快捷键请求
+    CMD_SET_KEY_RESP                        = 0x8432;  //设置交易快捷键应答
+    CMD_RISK_CLIENT_LOGIN_REQ               = 0x0433;  //风控客户端登录验证请求
+    CMD_RISK_CLIENT_LOGIN_RESP              = 0x8433;  //风控客户端登录验证答案
+    PUSH_MTC_ORDER_SET_INFO                 = 0x8434;  //推送订阅MTC风控参数信息
+    PUSH_MTC_DEC_BUTTON_INFO                = 0x8435;  //推送订阅MTC界面报单按钮操作频率参数信息
+    PUSH_ATC_ORDER_SET_INFO                 = 0x8436;  //推送订阅ATC风控参数信息
+    PUSH_ATC_DEC_BUTTON_INFO                = 0x8437;  //推送订阅ATC界面报单按钮操作频率参数信息
+    PUSH_BAN_BUY_SELL_INFO                  = 0x8438;  //推送订阅禁卖禁卖信息
+    CMD_SET_BAN_PAIR_CONTROL_REQ            = 0x0439;  //禁用配对风控/启动配对风控,设置请求
+    CMD_SET_BAN_PAIR_CONTROL_RESP           = 0x8439;  //禁用配对风控/启动配对风控,设置返回
+    CMD_QUERY_BAN_PAIR_CONTROL_REQ          = 0x043A;  //禁用配对风控/启动配对风控,查询请求
+    CMD_QUERY_BAN_PAIR_CONTROL_RESP         = 0x843A;  //禁用配对风控/启动配对风控,设置返回
+    CMD_POLICY_MONITOR_LOGIN_REQ            = 0x043B;  //PolicyMonitor登录授权验证服务器请求
+    CMD_POLICY_MONITOR_LOGIN_RESP           = 0x843B;  //PolicyMonitor登录授权验证服务器应答
+    CMD_ATC_LOGIN_REQ                       = 0x043C;  //ATC自动化客户端登录授权验证服务器请求
+    CMD_ATC_LOGIN_RESP                      = 0x843C;  //ATC自动化客户端登录授权验证服务器应答
+
+
+    CMD_ERROR_REQ                       = 0x8999;
+    CMD_HEARTBEAT_REQ                   = 0x0fff;  //  心跳请求 0x0FFF
+    CMD_HEARTBEAT_RESP                  = 0x8fff;
+    CONNECT_STATUS                      = 0x6600;  // 监控系统，连接状态信息
+    SUB_CONNECT_STATUS                  = 0x6601;  // 监控系统，订阅连接状态信息
+    UNSUB_CONNECT_STATUS                = 0x6602;  // 监控系统，反订阅连接状态信息
+    ORDER_QTY                           = 0x6700;  // 监控系统，每秒报单数量（指一秒时间的报单数量）
+    SUB_ORDER_QTY                       = 0x6701;  // 监控系统，订阅每秒报单数量
+    UNSUB_ORDER_QTY                     = 0x6702;  // 监控系统，反订阅每秒报单数量
+}
+
+enum client_type
+{
+    MANUAL_TRADE                        = 0x0;
+    AUTO_TRADE                          = 0x1;
+    ABA_TRADE                           = 0x2;
+}
+
+enum  subscribe_push_type
+{
+    SUB_CLOSE                           = 0;  //  取消订阅
+    SUB_STOCK_ORDER                     = 0x0001; //订阅委托
+    SUB_STOCK_KNOCK                     = 0x0002; //订阅成交
+    SUB_ASSET                           = 0x0004; //订阅资金
+    SUB_STOCK_POSITION                  = 0x0008; //订阅持仓
+    SUB_ETF_INFO                        = 0x10;
+    SUB_ETF_BASIS                       = 0x20;
+    SUB_CUSTOM_BASIS                    = 0x40;
+}
+
+enum policy_type
+{
+  STOCK_SINGLE_ORDER = 0x01; //单笔现货报单
+  FUTURE_ORDER = 0x02; //期货报单
+  BASKET_ORDER = 0x03; //篮子报单
+  ETF_CR_ORDER = 0x04; //ETF申赎
+  ETF_BS_CR_COMBO = 0x05; //买+申、赎+卖
+  ETF_QUICK_CR_COMBO = 0x06; //快申、快赎
+  ETF_SPREAD = 0x07; //正反向策略
+
+  //分级部分
+  STRUCT_F_LINK = 0x11; //联动
+  STRUCT_F_BS_AB = 0x12; //A+B买卖
+  STRUCT_F_MS = 0x13;  //合拆
+  STRUCT_F_BS_MS_COMBO = 0x14;  //买+合、拆+卖
+  STRUCT_F_MS_QUICK = 0x15;  //快合、快拆
+}
+
+enum operation_type
+{
+    OPR_WITHDRAWS                 = 0x00; // 撤单
+    OPR_BUY                       = 0x01; // 买
+    OPR_SELL                      = 0x02; // 卖
+    OPR_PURCHASE                  = 0x03; // 申
+    OPR_REDEEM                    = 0x04; // 赎
+    OPR_COMBINE                   = 0x05; // 分级基金合并
+    OPR_SPLIT                     = 0x06; // 分级基金拆分
+    OPR_BASEKET_SUBMIT            = 0x07; // 篮子补单
+    OPR_BASEKET_COMPLETE          = 0x08; // 篮子补齐
+    OPR_BASEKET_AUTO              = 0x0a; // 自动撤补
+    OPR_BUY_PURCHASE              = 0x0b; // 买+申
+    OPR_FAST_PURCHASE             = 0x0c; // 快申
+    OPR_REDEEM_SELL               = 0x0d; // 赎 + 卖
+    OPR_FAST_REDEEM               = 0x0e; // 快赎
+    OPR_BUY_COMBINE               = 0x0f; // 分级基金买+合
+    OPR_FAST_COMBINE              = 0x10; // 分级基金快和
+    OPR_SPLIT_SELL                = 0x11; // 分级基金拆+卖
+    OPR_FAST_SPLIT                = 0x12; // 分级基金快拆
+    OPR_REPLACE_COMPLETE          = 0x13; // replace complete
+    OPR_BUY_BA                    = 0x14; // 买 B+A
+    OPR_SELL_BA                   = 0x15; // 卖 B+A
+    OPR_FAST_SPLIT_B              = 0x16; // 拆B
+    OPR_FAST_SPLIT_S              = 0x17; // 拆S
+    OPR_PAUSE                     = 0x100;
+    OPR_STOP                      = 0x101;
+
+    OPR_MAX                       = 0x10000;
+}
+
+//策略的方向，对应于PolicyBaseParam中的direction
+enum policy_direction
+{
+    POLICY_DIRECTION_POSITIVE   = 0; //买、申、买+申、快申等
+    POLICY_DIRECTION_NEGATIVE   = 1; //卖、赎、赎+卖、快赎等
+}
+
+enum linkage_ab
+{
+    LINKAGE_NONE                = 0;
+    LINKAGE_A                   = 1;
+    LINKAGE_B                   = 2;
+}
+
+// enum replace_flag
+// {
+//     RF_MUST                 = 0;
+//     RF_ALLOW                = 1;
+//     RF_FORBIDDEN            = 2;
+// }
+
+enum withdrawal_all_type
+{
+    WITHDRAWS_BUY                       = 0x1;
+    WITHDRAWS_SELL                      = 0x2;
+    WITHDRAWS_BUY_SELL                  = 0x3;
+}
+
+message LoginReq
+{
+    required    int32       type                = 1;
+    required    string      trader_id           = 2;        //账号:ip
+    required    int32       version             = 3;   // MAJOR << 16 or MINOR
+}
+
+// 登录反馈(lymtc_login_resp)
+message LoginResp
+{
+    required    int32       result              = 1;  //登录结果
+    optional    int32       version             = 2;  //  new version
+
+}

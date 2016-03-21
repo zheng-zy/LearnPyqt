@@ -1,0 +1,244 @@
+// See README.txt for information and build instructions.
+
+package liyi.trade_db;
+
+message StockAsset {
+  required string fund_id = 1;   //账号ID
+  optional string money_type = 2; // 
+  optional int64 asset = 3;     //总资产
+  optional int64 capital_balance = 4;  //资金余额
+  optional int64 capital_avaliable = 5;  //可用资金
+  optional int64 capital_freezed_by_buy = 6;  
+  optional int64 capital_freezed_by_others = 7;
+  optional int64 market_value = 8;  //总市值
+  optional string info = 9;
+  required uint64 create_time = 10; //YYYYmmddHHMMSSsss
+}
+
+message StockPosition {
+  required string fund_id = 1;
+  required int32  market = 2;         // 市场0:深圳 1：上海
+  required string stock_id = 3;       //股票ID
+  optional string stock_name = 4;     //股票名称
+  optional int64 pre_volume = 5;      //昨日持仓
+  required int64 volume = 6;          //余额
+  optional int64 can_sell_volume = 7; //可用余额
+  optional int64 volume_freezed_by_sell = 8; //
+  optional int64 cur_buy_volume = 9;  //当日买入成交量
+  optional int64 cur_sell_volume = 10; //当日卖出量
+  optional int64 market_value = 11;   //市值
+  optional int64 cost_price = 12;     //成本价
+  optional int64 stock_can_purchase_volume = 13;
+  optional int64 stock_can_sell_and_purchase = 14;
+  optional int64 stock_can_sell_but_purchase = 15;
+  optional int64 freezed_by_sell_and_purchase = 16;
+  optional int64 freezed_by_sell_but_purchase = 17;
+  optional int64 stock_can_purchase_but_sell = 18;
+  optional int64 stock_freezed_by_purchase = 19;
+  optional int64 stock_cur_purchase_reduction = 20;
+  optional int64 stock_cur_redeem_addition = 21;
+  optional int64 etf_can_sell_and_redeem = 22;
+  optional int64 etf_can_sell_but_redeem = 23;
+  optional int64 freezed_by_sell_and_redeem = 24;
+  optional int64 freezed_by_sell_but_redeem = 25;
+  optional int64 etf_can_redeem_volume = 26;
+  optional int64 etf_can_redeem_but_sell = 27;
+  optional int64 etf_freezed_by_redeem = 28;
+  optional int64 freezed_by_redeem_and_sell = 29;
+  optional int64 freezed_by_redeem_but_sell = 30;
+  optional int64 etf_cur_purchase_addition = 31;
+  optional int64 etf_cur_redeem_reduction = 32;
+  required uint64 create_time = 33;       //YYYYmmddHHMMSSsss
+}
+
+message StockOrder {
+  required bytes  id = 1;
+  required string fund_id = 2;    //账号ID
+  required int32  market = 3;     // 市场0:深圳 1：上海
+  required int32  bs_flag = 4;    // 买卖标记 0x01:买 0x02:卖 0x03:申购 0x04:赎回,具体枚举信息参见base.proto opertion_type
+  optional string order_no = 5;    //合同号
+  optional string batch_no = 6;    //
+  required string stock_id = 7;   //股票ID
+  optional string stock_name = 8;  //股票名称
+  optional int64 price = 9;         //委托价格
+  required int64 volume = 10;       //委托数量
+  optional int64 freeze_amount = 11; //(委托数量-成交数量-撤单数量)*委托价格
+  optional int32 state = 12;  // 委托状态 0:已报等待响应 1:未成交 2:部分成交 3:部成部撤 4:部成已撤 5:已撤单 6:已成交 7:废单 8：未成交-部成待撤 9：部分撤单 10:委托失败
+  optional int64 knock_volume = 13;    //成交数量
+  optional int64 knock_amount = 14;  //成交金额
+  optional int64 knock_price = 15;   //成交价格
+  optional int64 withdraw_volume = 16;  //撤单数量
+  optional int64 knock_volume_by_get = 17;
+  optional int64 knock_amount_by_get = 18;
+  optional int64 withdraw_volume_by_get = 19;
+  optional int64 knock_volume_by_push = 20;
+  optional int64 knock_amount_by_push = 21;
+  optional int64 withdraw_volume_by_push = 22;
+  optional uint64 state_time = 23;
+  optional uint64 order_request_time = 24;   //委托时间
+  optional uint64 order_response_time = 25;
+  optional uint32 knock_begin_exchange_time = 26;
+  optional uint32 knock_begin_recv_time = 27;
+  optional uint32 knock_end_exchange_time = 28;
+  optional uint32 knock_end_recv_time = 29;
+  optional bytes  policy_id = 30;
+  optional string trader_id = 31;     //交易员ID
+  optional string trader_ip = 32;     //交易IP
+  optional string info = 33;
+  required uint64 create_time = 34; //YYYYmmddHHMMSSsss
+  optional int64 basket_amount = 35;	// 篮子金额
+}
+
+message StockWithdraw {
+  required string id = 1;
+  required string fund_id = 2;
+  required string request_no = 3;
+  optional string order_no = 4;
+  optional string batch_no = 5;
+  optional int32 state = 6;
+  optional uint32 state_time = 7;
+  optional uint32 withdraw_request_time = 8;
+  optional uint32 withdraw_response_time = 9;
+  optional uint32 knock_exchange_time = 10;
+  optional uint32 knock_recv_time = 11;
+  optional bytes  policy_id = 12;
+  optional string trader_id = 13;
+  optional string trader_ip = 14;
+  optional string info = 15;
+  required uint32 data_date = 16;
+  required uint64 create_time = 17;
+}
+
+message StockKnock {
+  required string fund_id = 1;   //账号ID
+  required int32  bs_flag = 2;    // 买卖标记 0x01:买 0x02:卖 0x03:申购 0x04:赎回,具体枚举信息参见base.proto opertion_type
+  required string order_no = 3;   //委托编号
+  required int32  market = 4; // 市场0:深圳 1：上海
+  required string stock_id = 5;  //股票ID
+  optional string stock_name = 6;  //股票名称
+  optional int32 match_type = 7; //[1]：买卖申赎，[2]：撤单，[-1]：废单，[-2]：撤单废单
+  optional string batch_no = 8;
+  optional string match_no = 9;
+  required string inner_match_no = 10;  //内部成交编号
+  required uint32 match_time = 11;  //成交时间
+  optional int64 match_price = 12;  //成交价格
+  optional int64 match_volume = 13; //成交数量
+  optional int64 match_amount = 14; //成交金额
+  optional int64 clear_amount = 15;
+  optional int32 broker = 16;
+  optional int32 order_bs_flag = 17; // 买卖标记 0x01:买 0x02:卖 0x03:申购 0x04:赎回,具体枚举信息参见base.proto opertion_type
+  optional int64 order_volume = 18;
+  optional int64 order_price = 19;
+  optional bytes policy_id = 20;
+  optional string trader_id = 21;
+  optional string trader_ip = 22;
+  optional string belonged_etf_code = 23;
+  optional uint32 recv_time = 24;
+  optional string info = 25;
+  required uint32 data_date = 26;     // 券商日期YYYYMMDD
+  required uint64 create_time = 27;   // YYYYmmddHHMMSSsss
+  optional int64 total_knock_volume = 28;     // 总成交量
+}
+
+message FutureAsset {
+  required string fund_id = 1; //资金帐号
+  optional int32 money_type = 2; //币种
+  optional int64 asset = 3; //资金总额
+  optional int64 capital_balance = 4; //期货结算准备金
+  optional int64 capital_avaliable = 5; //可用资金
+  optional int64 market_value = 6;  //持仓市值（未用）
+  required uint64 create_time = 7; //YYYYmmddHHMMSSsss
+}
+
+message FuturePosition {
+  required string fund_id = 1; //资金帐号
+  optional string market = 2; //交易所编号
+  required string instrument_id = 3; //合约号
+  optional string instrument_name = 4; //合约名称
+  optional int64 long_volume = 5;      // 多头持仓
+  optional int64 long_price = 6;	// 多头均价
+  optional int64 long_frozen = 7;   //多头冻结
+  optional int64 short_volume = 8;     // 空头持仓
+  optional int64 short_price = 9;      // 空头均价
+  optional int64 short_frozen = 10;   //空头冻结
+  optional string hedging_flag = 11;   // 套保标记："1": 投机 "2": 套利 "3":套保
+  optional string info = 12;      //保留字段（未用）
+  required uint64 create_time = 13; //YYYYmmddHHMMSSsss
+}
+
+message FutureOrder {
+  required string fund_id = 1; //资金帐号
+  optional string market = 2; //交易所编号(由CTP定义，其文档未列出)
+  optional int32 bs_flag = 3;  // '0': buy  '1': sell
+  optional string order_no = 4; //订单号
+  required string instrument_id = 5; //合约号
+  optional string instrument_name = 6; //合约名称
+  optional int64 price = 7; //报单价格
+  optional int64 qty = 8; //报单数量
+  optional int32 status = 9; // 委托状态 0:已报等待响应 2:部分成交 5:已撤单 6:已成交 10:委托失败
+  optional int64 knock_volume = 10;//成交数量
+  optional int64 knock_amount = 11;//成交金额
+  optional int64 knock_price = 12;//成交价格
+  optional int64 unknock_volume = 13;//剩余未成交数量
+  optional uint32 submit_time = 14;//HHMMSSsss
+  optional string info = 15; //交易所生成订单号
+  required uint32 order_date = 16; //YYYYmmdd
+  optional uint32 order_time = 17;//CTP接受委托时间 HHMMSSsss
+  required uint64 create_time = 18; //YYYYmmddHHMMSSsss
+  optional bytes policy_id = 19;     //策略Id
+  optional string trader_id = 20;    //交易员ID
+  optional string trader_ip = 21;    //交易员IP
+  optional int32 open_close_flag = 22; //开平仓标记 '0':开仓 '1':平仓 '2'：强平 '3'：平今 '4'：平昨 '5'：强减 '6'：本地强平 '7'：未知
+  optional uint64 update_time = 23; //委托更新时间 HHMMSSsss
+  optional uint64 request_time = 24;//接受委托时间 HHMMSSsss
+}
+
+message FutureKnock {
+  required string fund_id = 1; //资金帐号
+  required string market = 2; //交易所编号(由CTP定义，其文档未列出)
+  required int32 bs_flag = 3; // '0': buy  '1': Sell
+  required string order_no = 4; //订单号
+  required string instrument_id = 5; //合约号
+  optional string instrument_name = 6; //合约名称
+  optional int64 order_volume = 7; //报单数量
+  optional int64 order_price = 8; //报单价格
+  optional int32 match_type = 9;    // 1：买卖，2：撤单，-1：废单，-2：撤单废单
+  optional string match_no = 10; // 交易所成交号
+  required string inner_match_no = 11; //内部维护成交号
+  optional uint32 match_time = 12; //HHMMSSsss
+  optional int64 match_price = 13; //成交价格
+  optional int64 match_volume = 14; //本次部分成交 成交数量
+  optional int64 match_sum = 15; //累计成交数量
+  optional int64 match_amount = 16; //成交金额
+  optional int64 clear_amount = 17; //（未用）
+  optional int32 broker = 18; //经纪公司代码
+  optional uint32 recv_time = 19; //HHMMSSsss
+  optional string ctp_status_msg = 20; //CTP状态信息
+  optional uint32 order_date = 21; //YYYYmmdd
+  required uint32 trade_date = 22; //YYYYmmdd
+  required uint64 create_time = 23; //YYYYmmddHHMMSSsss
+  optional bytes policy_id = 24;     //策略Id
+  optional string trader_id = 25;    //交易员ID
+  optional string trader_ip = 26;    //交易员IP
+}
+
+message FutureInstrument {
+  required string instrument_id = 1;		// 合约代码
+  optional string instrument_name = 2;	// 合约名称
+  optional string exchange_id = 3;		// 交易所代码
+  optional double long_margin_ratio = 4;		// 多头保证金率
+  optional double short_margin_ratio = 5;	    // 空头保证金率
+  optional int32 volume_multiple = 6;		// 合约数量乘数
+  optional int32 max_limit_order_volume = 7;	    // 限价单最大下单量
+  optional int32 min_limit_order_volume = 8;	    // 限价单最小下单量
+  optional string start_deliv_date = 9;	    // 开始交割日
+  optional string end_deliv_date = 10;		// 结束交割日
+  optional string expire_date = 11;		// 到期日
+}
+
+
+// 委托、成交、设置资金响应
+message BaseResponse {
+  required int32 rc = 1; // return code
+  optional string msg = 2; // return message
+}

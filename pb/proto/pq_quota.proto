@@ -1,0 +1,108 @@
+
+// 礼一数据协议——行情
+
+/*
+4字节    | 2字节    | 2字节    | 16字节     | 
+Uint_32  | Uint_16  | Uint_16  | binary     | binary
+包体长度 | 系统区号 | 包子类型 | requeset_Id | 包体
+*/
+
+package ly.quota;
+
+//1.盘前盘后数据信息
+message MarketDaily
+{
+	required int32 exch_id = 1;   // 交易所
+	required string stock_id = 2;    // 证券代码
+	required int32 tdate = 3;   // 交易日期
+	required string stock_name = 4; //证券名称
+	required int32 status = 5;   // 状态(停牌)
+	required int64 pre_close = 6;  // 前收价，原金额*10000
+	required int64 high_limit = 7;  // 涨停价，原金额*10000
+	required int64 low_limit = 8;  // 跌停价，原金额*10000
+	required int64 open = 9;	// 开盘价，原金额*10000
+	required int64 close = 10;  // 收盘价，原金额*10000
+	required int64 high = 11;  // 最高价，原金额*10000
+	required int64 low = 12;	// 最低价，原金额*10000
+	required int64 qty = 13;   // 成交量
+	required int64 amount = 14;   // 成交金额，原金额*10000
+	required string flag = 15;  // 除权除息标志
+	required int64  nav = 16;   // 昨日净值，原金额*10000
+	required int32  idnum = 17;   // 本日编号
+	required int32  stock_type = 18;   // 证券代码类型 'S':现货 'I':指数
+	optional int32  stop_date = 19;    // 停牌日期
+	optional int64  stop_price = 20;   // 停牌最新价, 原金额*10000
+}
+
+//2.etf基本信息
+message EtfBasketInfo
+{
+	required int32  date= 1;   //当天日期(YYYYMMDD)
+	required string etf_code= 2;   //二级市场上的交易基金代码
+	required string etf_p_r_code= 3;   //一级市场上的交易基金代码
+	required uint32 creation_redemption_unit= 4;   //最小申赎单位
+	required int64 estimate_cash_component= 5;   //预估现金差额，原金额*10000
+	required int32 creation= 6;   //是否申购，0-否、1-是 
+	required uint32 record_num= 7;   //申购赎回组合证券只数
+	required int64 cash_component= 8;   //现金差额，原金额*10000
+	required int64 navpercu= 9;   // 最小申赎单位资产净值，原金额*10000
+	required int64 nav= 10;   //基金份额净值，原金额*10000
+	required int32 redemption= 11;   //是否赎回，0-否、1-是
+	required double max_cash_ratio= 12;   //可以现金替代比例上限
+	//etf成分股列表信息
+	message EtfListBasket
+	{
+		required string etf_code= 1;   //二级市场上的交易基金代码
+		required string stock_id= 2;   //成分股代码
+		required string stock_name= 3;   //成分股名称
+		required uint32 execute_qty= 4;   //成分股数量
+		required uint32 replace_flag= 5;   //替代标示（0：禁止现金替代，1：允许现金替代，2：必须现金替代，3：跨市ETF退补现金替代，4：跨市ETF必须现金替代，5：跨境ETF退补现金替代，6：跨境ETF必须现金替代,7:未知）
+		required double max_cash_ratio= 6;   //现金替代溢价比率
+		required int64 total_amount= 7;   //替代金额，原金额*10000
+	}
+	repeated EtfListBasket etf_list = 13;
+	optional string creation_limit = 14;     // 申购上限
+	optional string redemption_limit = 15;   // 赎回上限
+}
+	
+//3.分级基金信息
+message StructuredFundInfo
+{
+	required string stock_id= 1;   //股票代码
+	required int32 nav_date= 2;    //净值日期(YYYYMMDD)
+	optional int32 update_time= 3; //更新时间(HHMMSSmmm)
+	optional int64 nav= 4;         //分级基金净值，原金额*10000
+}
+
+// ETF清单差异
+message EtfListDiffItem
+{
+	optional string  stk_id        = 1;   // 股票代码
+	optional string  stk_name      = 2;   // 股票名称
+	optional int64   sub_qty       = 3;   // 股票数量差
+	optional int32   replaceflag   = 4;   // 替代标示 
+	optional int64   totalamt      = 5;   // 替代金额,原金额*10000	
+	optional int32   change_type   = 6;   // 变更分类,0表示仅数量变化，1表示仅替代标志变化，2表示数量和替代标准均变化，3表示该成分股今日已移除，4表示该成分股今日新添加 
+}
+
+message EtfListDiff
+{
+	optional int32   date          = 1;   // 运行日期:YYYYMMDD
+	optional int32   update_time   = 2;   // 更新时间:HHMMSSmmm
+	optional string  etfcode       = 3;   // 二级市场代码 
+	optional string  etf_p_r_code  = 4;   // 一级市场代码
+	optional int64   sub_est_cash  = 5;   // 预估现金偏差,原金额*10000	
+	repeated EtfListDiffItem item  = 6;   // 变更清单
+}
+
+message PreQuoSubMsg
+{
+  optional uint32 sub_flag  = 1;  //订阅方式：
+              //  0：取消订阅
+              //  1：增加订阅
+  repeated uint32 sub_type  = 2;  //订阅类型：
+              //  DBF行情数据信息
+              //  ETF清单信息
+              //  ETF清单变更信息
+              //  分级基金信息
+}

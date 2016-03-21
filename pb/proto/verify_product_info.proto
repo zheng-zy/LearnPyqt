@@ -1,0 +1,291 @@
+//授权验证服务器用到的信息
+package verify_product;
+
+
+//风控服务后台 运维
+/////////////////////////////////////////////////////////////////////////////////////////
+//产品信息  
+message verify_product_info
+{
+    required string product_id = 1; //产品ID
+    required string product_name = 2;//产品名称
+    optional string stock_account = 3;//现货账号
+    optional string future_account = 4;//期货账号
+    optional string option_account = 5;//期权账号
+}
+
+//产品信息请求：包体为空 cmd_id:CMD_QUERY_VERIFY_PRODUCT_REQ
+
+//产品信息应答包 cmd_id:CMD_QUERY_VERIFY_PRODUCT_RESP
+message Verify_Product_Query_Info
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  repeated verify_product_info  product_info = 2;  // 返回信息
+  optional string msg = 3;      //当返回有错误的时候，填充错误信息   
+}
+/////////////////////////////////////////////////////////////////////////////////////////
+
+//PolicyMonitor 登录验证   
+/////////////////////////////////////////////////////////////////////////////////////////
+
+//PolicyMonitor 登录验证请求  cmd_id: CMD_POLICY_MONITOR_LOGIN_REQ
+message PolicyMonitorLoginReq
+{
+    required string trader_id = 1;           //终端名
+    required string password = 2;           //密码
+}
+
+//PolicyMonitor 登录验证应答  cmd_id: CMD_POLICY_MONITOR_LOGIN_RESP
+message PolicyMonitorLoginResp
+{
+    required int32 ret_code = 1;  //0表示返回成功
+    optional string msg = 2;      //当返回有错误的时候，填充错误信息
+    repeated ProductInfo product_list = 3;//产品列表
+}
+/////////////////////////////////////////////////////////////////////////////////////////
+
+//ATC 登录验证   
+/////////////////////////////////////////////////////////////////////////////////////////
+//ATC 登录验证   cmd_id: CMD_ATC_LOGIN_REQ
+message ATCLoginReq
+{
+    required string trader_id = 1;           //终端名
+    required string password = 2;       //密码
+}
+
+//登录应答  cmd_id: CMD_ATC_LOGIN_RESP
+message ATCLoginResp
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+}
+
+//ATC 获取产品组信息   详见MTC获取产品组信息，在楼下（cmd_id: CMD_QUERY_PRODUCT_GROUP_REQ）
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+//手工交易客户顿
+/////////////////////////////////////////////////////////////////////////////////////////
+//手工客户端登录验证  cmd_id: CMD_MTC_LOGIN_REQ
+message MTCLoginReq
+{
+    required string trader_id = 1;           //终端名
+    required string password = 2;       //密码
+}
+
+//登录应答  cmd_id: CMD_MTC_LOGIN_RESP
+message MTCLoginResp
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+}
+
+//获取产品组信息请求 cmd_id：CMD_QUERY_PRODUCT_GROUP_REQ
+message ProductGroupQueryReq
+{
+    required string trader_id = 1;
+}
+
+//产品组应答 cmd_id: CMD_QUERY_PRODUCT_GROUP_RESP
+message ProductGroupQueryResp
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  repeated ProductGroupInfo group_list = 2;  // 返回信息
+  optional string msg = 3;      //当返回有错误的时候，填充错误信息   
+}
+
+message ProductGroupInfo
+{
+    required string product_group_id = 1;//产品组ID
+    required string product_group_name = 2;//产品组名称
+    repeated ProductInfo product_list = 3;//产品列表
+}
+
+//产品信息
+message ProductInfo
+{
+    required string product_id = 1;//产品
+    required string product_name = 2;//产品名称
+}
+
+//快速申赎常用代码、股票买卖、分级基金手动交易常用代码（分级基金常用代码和常用数量没有一一对应关系）
+
+//常用代码对应的数量查询请求 cmd_id: CMD_QUERY_CODE_NUMBER_REQ
+message CodeNumberQueryReq
+{
+    required string trader_id = 1;
+    required uint32 form = 2;//对应的界面  使用枚举量 
+}
+
+//常用代码对应的数量请求应答 cmd_id: CMD_QUERY_CODE_NUMBER_RESP
+message CodeNumberQueryResp
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+  repeated CodeNumberInfo code_number_list = 3;  // 返回信息
+  required uint32 form = 4;    //对应的界面  使用枚举量 
+
+}
+
+enum CodeNumberForm
+{
+    FROM_ALL = 0x0;//查询所有的页面
+    FORM_FAST_CODE_NUMBER   = 0X1;//快速申赎界面常用代码对应常用委托数量设置
+    FORM_FAST_NUMBER    = 0x2;//快速申赎界面常用委托数量设置
+    FORM_STOCK_CODE_NUMBER  = 0X3;//股票买卖界面常用代码对应常用委托数量设置
+    FORM_FJJJ_CODE    = 0x4;//分级基金界面常用代码设置
+    FORM_FJJJ_NUMBER  = 0x5;//分级基金界面常用委托数量设置 
+}
+
+message CodeNumberInfo
+{
+    optional string stock_code = 1;  //常用股票代码
+    optional uint32 order_number = 2; //常用委托数量
+}
+
+//常用代码设置请求 cmd_id: CMD_SET_CODE_NUMBER_REQ
+message CodeNumberSetReq
+{
+    required string trader_id = 1;
+    repeated CodeNumberInfo code_number_list = 2;//设置的内容
+    required uint32 form = 3;//对应的界面  使用枚举量 
+}
+
+//常用代码设置应答 cmd_id: CMD_SET_CODE_NUMBER_RESP
+message CodeNumberSetResp
+{
+    required int32 ret_code = 1;  //0表示返回操作成功
+    optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+}
+
+//界面布局查询请求 包体为空  cmd_id：CMD_QUERY_LAYOUT_REQ
+message LayoutQueryReq
+{
+    required string trader_id = 1;
+}
+
+//界面布局查询应答  cmd_id: CMD_QUERY_LAYOUT_RESP
+message LayoutQueryResp
+{
+    required int32 ret_code = 1;  //0表示返回成功
+    required LayoutInfo layout_info = 2;  // 返回信息
+    optional string msg = 3;      //当返回有错误的时候，填充错误信息  
+}
+
+message LayoutInfo
+{
+    required string trader_id = 1;   //交易员ID
+    required bytes layout = 2;     //布局信息
+}
+
+//界面布局设置请求 包体为空  cmd_id：CMD_SET_LAYOUT_REQ
+message LayoutSetReq
+{
+    required string trader_id = 1;
+    required LayoutInfo layout_info = 2;//布局配置信息
+}
+
+//界面布局设置应答 包体为空  cmd_id：CMD_SET_LAYOUT_RESP
+message LayoutSetResp
+{
+    required int32 ret_code = 1;  //0表示返回操作成功
+    optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+}
+
+//获取交易权限请求 包体为空 cmd_id: CMD_QUERY_TRADER_RIGHTS_REQ
+message RightQueryReq
+{
+    required string trader_id = 1;
+}
+
+//获取交易权限应答 包体为空 cmd_id: CMD_QUERY_TRADER_RIGHTS_RESP
+message RightQueryResp
+{
+    required int32 ret_code = 1;  //0表示返回操作成功
+    optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+    repeated RightInfo right_info_list = 3;
+}
+
+message RightInfo
+{
+    required string trader_id = 1;//账户ID
+    required string product_group_id = 2;//产品组ID
+    required string product_id = 3;//产品ID
+    required uint64 stock_max_buy = 4;//股票单笔最大买入金额
+    required uint64 stock_max_sell = 5;//股票单笔最大卖出金额
+    required uint64 fund_max_buy = 6;//ETF最大买入金额
+    required uint64 fund_max_sell = 7;//ETF最大卖出金额
+    required bool is_future = 8;//期货授权
+    required bool is_option = 9;//期权授权
+    required uint64 repurchase_max_money = 10;//逆回购操作总金额
+    required uint64 single_basket_max = 11;//单笔篮子最大金额授权
+    required int32 basket_stock_batch_discount_rate = 12; //篮子股票批量买卖报单折溢价比例
+    required int32 etf_iopv_discount_rate = 13;//ETF根据申赎IOPV报单的折溢价比例
+    required int32 future_order_discount_rate = 14;//期货报单折溢价比例
+    required int32 fjjj_discount_rate = 15;//FJJJ根据最新价报单的折溢价比例授权
+}
+
+//自定义快捷键
+message KeyInfo
+{
+    required uint32 index = 1;  //
+    required string key_name = 2;//功能
+    required string key_value = 3;//键值
+}
+
+//获取交易快捷键信息 包体为空 cmd_id: CMD_QUERY_KEY_REQ
+message KeyQueryReq
+{
+    required string trader_id = 1;
+}
+
+//获取交易快捷键信息应答 包体为空 cmd_id: CMD_QUERY_KEY_RESP
+message KeyQueryResp
+{
+    required int32 ret_code = 1;  //0表示返回操作成功
+    optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+    repeated KeyInfo key_list = 3;//
+}
+
+//设置交易快捷键请求 包体为空 cmd_id: CMD_SET_KEY_REQ
+message KeySetReq
+{
+    required string trader_id = 1;
+    repeated KeyInfo key_list = 2;
+}
+
+//设置交易快捷键请求 包体为空 cmd_id: CMD_SET_KEY_RESP
+message KeySetResp
+{
+    required int32 ret_code = 1;  //0表示返回操作成功
+    optional string msg = 2;      //当返回有错误的时候，填充错误信息  
+}
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+//风控客户端
+/////////////////////////////////////////////////////////////////////////////////////////
+//风控客户端登录验证请求  cmd_id: CMD_RISK_CLIENT_LOGIN_REQ
+message RiskClientReq
+{
+    required string trader_id = 1;
+    required string password = 2;
+}
+
+//风控客户端登录验证应答  cmd_id: CMD_RISK_CLIENT_LOGIN_RESP
+message RiskClientResp
+{
+    required int32 ret_code = 1;  //0表示返回成功
+    optional UserInfo user_info = 2;  // 返回信息
+    optional string msg = 3;      //当返回有错误的时候，填充错误信息  
+}
+
+//用户信息
+message UserInfo
+{
+    required string trader_id = 1;        //用户ID
+    required bool is_manager = 2;     //是否是基金经理
+    repeated verify_product_info product_list = 3; //基金经理独立风控授权的产品列表 
+    required bool is_privilege = 4;     //是否已经授权 
+}
+/////////////////////////////////////////////////////////////////////////////////////////

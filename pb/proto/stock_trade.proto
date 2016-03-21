@@ -1,0 +1,242 @@
+import "trade_db_model.proto";
+import "base.proto";
+package stock_trade;
+
+// 委托撤单请求报文
+// 响应包为请求包类型 | 0x8000，即将最高位置为1
+// 包类型：
+//  单笔委托：0x0002，响应:0x8002
+//    撤单请求：0x0003, 响应:0x8003
+//  ETF申购赎回请求：0x0004
+//    批量委托请求：0x0005
+//  批量撤单请求: 0x0006
+//    客户端查询成交回报：0x0024
+//  服务端主动推送成交回报：0x0034 pb包为QueryStockKnockResponse
+//  资金查询请求0x0021
+//  持仓查询请求0x0022
+//  委托查询请求0x0023
+//  心跳请求 0x0FFF
+//  资金信息推送:0x0031， pb包为QueryAssetResponse
+//  持仓信息推送:0x0032, PB包同持仓查询响应报文
+//  委托信息推送:0x0033, PB包同委托查询响应报文
+//  订阅委托信息、成交信息、持仓信息、资金信息请求0x0017
+//  订阅成交推送:0x0034，PB包同成交查询响应报文
+
+
+//以下枚举说明为:SingleOrderReq中instrument_type字段数据的具体标示说明-股票类型代码
+//0x10--0x1e, 股票
+//kInstrumentTypeStocks         = 0x10, //股票
+//kInstrumentTypeAStocks        = 0x10, //A股
+//kInstrumentTypeSMEBoard       = 0x11, //中小板股, Small and medium-size Enterprise Stock Market
+//kInstrumentTypeGEMBoard       = 0x12, //创业板股,Growth Enterprises Market Board
+//kInstrumentTypeBStocks        = 0x16, //B股
+//kInstrumentTypeHStocks        = 0x17, //H股(在香港上市的A股，为上海Level2行情H股增加)
+//kInstrumentTypeUS             = 0x1a, //US
+//kInstrumentTypeUSADR          = 0x1b, //US ADR
+//kInstrumentTypeExtendedStocks = 0x1e, //扩展板块股票(港)
+
+//0x20--0x25, //基金
+//kInstrumentTypeFunds         = 0x20, //基金
+//kInstrumentTypeNLOF          = 0x21, //未上市开放基金,Not listed Open-Ended Fund
+//kInstrumentTypeLOF           = 0x22, //上市开放基金,Listed Open-Ended Fund
+//kInstrumentTypeETF           = 0x23, //交易型开放式指数基金, Exchange Traded Fund
+//kInstrumentTypeExtendedFunds = 0x25, //扩展板块基金(港)
+
+//0x40--0x41, //回购
+////kInstrumentTypeRepos             = 0x40, //回购
+//kInstrumentTypeTreasuryBondsRepo   = 0x40, //国债回购
+//kInstrumentTypeEnterpriseBondsRepo = 0x41, //企债回购
+
+//     CMD_SINGLE_ORDER_REQ                //  单笔下单
+//     CMD_ETF_ORDER_REQ                   //  etf 操作申购
+message SingleOrderReq
+{
+    required string   code        = 1;        // 股票代码
+    required int64    price       = 2;        // 价格
+    required uint32   qty         = 3;        // 数量
+    required int32    bs_flag     = 4;        // 买卖标记 0x01:买 0x02:卖 0x03:申购 0x04:赎回,具体枚举信息参见base.proto opertion_type
+    required int32    market      = 5;        // 市场0:深圳 1：上海
+    optional bytes        policy_id    = 6;        // 策略ID
+    required string        trader_id    = 7;        // 交易员ID
+    optional string        trader_ip    = 8;        // 交易员IP
+    optional int32    instrument_type = 9;    // 股票代码类型 0x20--0x25:基金 0x40--0x41:回购  0x10--0x1e:股票， 其他默认为股票(详细说明见上面)
+    optional int64      basket_amount    = 10;    // 篮子金额
+    optional client_type  client_type = 11;        //交易客户端类型
+    optional policy_type  policy_type = 12; //下单策略
+}
+
+// 单笔撤单 CMD_SINGLE_WITHDRAWAL_REQ           = 0x0003;  //  单笔撤单
+message SingleCancelReq
+{
+    required string     order_no    = 1;        //订单编号
+    optional int32      market      = 2;        //市场 0:深圳 1：上海
+    optional bytes        policy_id    = 3;        //策略ID
+    optional string        trader_id    = 4;        //交易员ID
+    optional string        trader_ip    = 5;        //交易员IP
+}
+
+// 单笔委托、单笔撤单、ETF申购赎回响应报文
+// CMD_SINGLE_ORDER_RESP                //  单笔下单应答
+// CMD_SINGLE_WITHDRAWAL_RESP           //  单笔撤单应答
+message SingleOrderResp
+{
+    required int32      ret_code     = 1;            //0成功，其他失败
+    optional string     order_no     = 2;            //委托编号
+    optional string     ret_message  = 3;
+    optional bytes      policy_id    = 4;
+}
+
+// 批量委托请求
+//     CMD_BATCH_ORDER_REQ                 = 0x0005;  //  批量下单
+message StockBatchOrderReq
+{
+    repeated    SingleOrderReq  order_list      = 1;     // 批量组合
+    optional    bytes           policy_id       = 2;     //
+}
+
+// 批量委托响应 CMD_BATCH_ORDER_RESP               //  批量下单应答
+message StockBatchOrderResp
+{
+    required    int32           ret_code            = 1;            // 0成功
+    optional    string          ret_message         = 2;            // 错误消息
+    optional    string          batch_no            = 3;            // 批次号
+    repeated    SingleOrderResp order_resp_list     = 4;           // 委托编号（跟批量报单的顺序相同）
+    optional    bytes           policy_id           = 5;     //
+}
+
+// 批量撤单请求
+// CMD_BATCH_WITHDRAWAL_REQ            = 0x0006;  //  批量下单
+message StockBatchOrderCancelReq
+{
+    required string     batch_no     = 1;        // 批次号
+    optional int32        market         = 2;       // 0:深圳 1：上海
+    optional bytes        policy_id     = 3;        // 策略ID
+    optional string        trader_id     = 4;        // 交易员ID
+    optional string        trader_ip     = 5;        // 交易员IP
+}
+
+// 批量撤单响应
+// CMD_BATCH_WITHDRAWAL_RESP           = 0x8006;  //  批量下单应答
+message StockBatchOrderCancelResp
+{
+    required int32      ret_code            = 1;            //0成功，其他失败
+    optional string     batch_no            = 2;            //批次号
+    optional string     ret_message         = 3;
+    optional bytes      policy_id           = 4;        // 策略ID
+}
+
+
+//资金查询请求，无包体
+//    CMD_QUERY_ASSET_REQ                 = 0x0021;  //  查询现金
+
+//查询现货资金响应
+//    CMD_QUERY_ASSET_RESP                = 0x8021;  //  查询现金应答
+//订阅资金推送消息接收
+message QueryAssetResponse {
+    required int32 ret_code = 1;           //错误码
+    optional string ret_message = 2;       //错误信息
+    optional liyi.trade_db.StockAsset stock_asset = 3;   //资金情况
+}
+
+
+// 查询持仓请求
+//    CMD_QUERY_STOCK_POSITION_REQ        = 0x0022;  //  查询现货
+message QueryPositionRequest {
+    optional string code = 1;           // 证券代码，为空查询所有持仓
+}
+
+//查询现货持仓响应
+//    CMD_QUERY_STOCK_POSITION_RESP       = 0x8022;  //  查询现货应答
+//订阅持仓推送消息接收
+message QueryPositionResponse {
+    required int32  ret_code = 1;                 // 错误码
+    optional string ret_message = 2;             // 错误信息
+
+    repeated liyi.trade_db.StockPosition stock_position = 3;   // 持仓情况
+}
+
+
+//查询现货委托请求
+//    CMD_QUERY_STOCK_ORDER_REQ           = 0x0023;  //  查询现货委托
+message QueryOrderRequest {
+    optional string order_no = 1;         //order_no为空代表查全部
+    optional int32  begin = 2[default=0];  // 开始下标
+}
+
+//查询现货委托响应
+//    CMD_QUERY_STOCK_ORDER_RESP          = 0x8023;  //  查询现货委托应答
+//订阅委托推送消息接收
+message QueryStockOrderResponse {
+    required int32 ret_code = 1;                 //错误码
+    optional string ret_message = 2;             //错误信息
+    optional int32  is_last = 3;                //是否还有后续数据，0否，1是
+    repeated liyi.trade_db.StockOrder stock_order = 4;         //委托数据
+}
+
+
+//查询成交明细请求
+//    CMD_QUERY_STOCK_KNOCK_REQ           = 0x0024;  //  查询现货成交明细
+message QueryStockKnockRequest {
+    optional string order_no = 1;         //order_no为空代表查全部
+    optional string start_pos = 2;        // 成交查询开始位置
+    optional int32  begin = 3[default=0];  // 开始下标
+}
+
+//查询成交明细响应
+//  CMD_QUERY_STOCK_KNOCK_RESP          = 0x8024;  //  查询现货成交明细应答
+//订阅成交推送消息接收
+message QueryStockKnockResponse {
+    required int32 ret_code = 1;                 //错误码
+    optional string ret_message = 2;             //错误信息
+    optional string last_pos = 3;                //成交响应最后位置
+    optional int32  is_last = 4;                 //是否还有后续数据，0否，1是
+    repeated liyi.trade_db.StockKnock stock_knock = 5;         //成交数据
+}
+
+
+//订阅现货的委托、成交明细、资金、持仓信息请求
+//  CMD_SUBSCRIBE_TRADE_REQ             = 0x0030;  //  订阅  subscribe_push_type
+message SubTradeMsgRequest {
+    required int32 type  = 1;
+    optional int32 begin = 2[default=0];  // 开始下标
+}
+
+// 订阅响应
+//    CMD_SUBSCRIBE_TRADE_RESP            = 0x8030;  //  订阅应答
+message SubTradeMsgResponse {
+    required int32  ret_code    = 1;            //错误码
+    optional string ret_message = 2;            //错误信息
+}
+
+//特殊出错响应 0x8999
+message ErrResp
+{
+  required int32 ret_code = 1;
+  optional string ret_message = 2;
+}
+
+// 查询基金可赎回数Etf信息
+message QueryRedeemEtfItem
+{
+    required string etfcode             = 1; // etfcode
+    required int32  market              = 2; // 市场0:深圳 1：上海
+}
+
+// 查询基金可赎回数
+//  CMD_QUERY_ETF_PURDEEM_REQ           = 0x0028;  //  查询etf 可申购赎回数
+message QueryRedeemNumReq
+{
+    repeated QueryRedeemEtfItem etf_info             = 1; // etfcode
+    optional string    trader_id                        = 2; // 交易员ID
+    optional string    trader_ip                        = 3; // 交易员IP
+}
+
+// 基金可赎回数返回
+// CMD_QUERY_ETF_PURDEEM_RESP          = 0x8028;
+message QueryRedeemNumResp
+{
+    required int32    ret_code             = 1; //0成功，其他失败
+    optional string ret_message          = 2;
+    optional string etfcode             = 3; // etfcode
+    optional int32  num                  = 4; // 可赎回数
+}

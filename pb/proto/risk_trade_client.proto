@@ -1,0 +1,77 @@
+//交易客户端统一配置参数
+package risk_trade_client;
+
+message client_set_info
+{
+  optional uint32 combine_order_delay = 1;      //组合报单个股延时参数单位毫秒
+  optional uint32 combine_order_max_delay = 2;  // 组合报最大延时参数单位毫秒
+  optional uint32 auto_reorder_delay = 3;       //自动撤补时间间隔参数单位毫秒
+  optional uint32 match_delay = 4;              //配对转换撤单等待延时参数单位毫秒
+  optional uint32 max_auto_withdraw_times = 5;   //MTC自动撤补的最大次数
+  optional uint32 auto_future_draw_float_num = 6; //自动化正反向期货自动撤补浮动点数设置
+  optional uint32 auto_future_draw_most_num = 7; //自动化正反向期货自动撤补最多次数
+  optional uint32 auto_future_intertemporal_draw_most_num = 8; //自动化期货跨期自动撤补最多次数
+  optional string auto_positive_negative_lock_market_percent = 9;//自动化正反向期现对锁市值百分比
+  optional string auto_redemption_lock_market_percent = 10;//自动化申赎期现对锁市值百分比
+};
+
+//交易客户端统一配置参数,设置请求
+message Trade_Client_Set_Req
+{
+  required client_set_info client_set = 1; 
+};
+
+//交易客户端统一配置参数,设置返回
+message Trade_Client_Set_Resp
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+};
+
+//交易客户端统一配置参数查询返回
+message Trade_Client_Query_Info
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional client_set_info client_set = 2; // 返回历史设置信息,第一次返回没有值 
+  optional string msg = 3;      //当返回有错误的时候，填充错误信息   
+};
+
+
+enum risk_data_type 
+{
+  MTC_ORDER_TYPE = 0x01;  //MTC风控参数
+  MTC_DEC_BUTTON_TYPE = 0x02; //MTC风控界面报单按钮操作 
+  ATC_ORDER_TYPE = 0x03; //ATC风控参数
+  ATC_DEC_BUTTON_TYPE = 0x04; //ATC风控界面报单按钮操作 
+  BAN_BUY_SELL_TYPE = 0x05; //禁卖禁买 
+}
+
+//上层客户端订阅数据
+message SubRiskReq
+{
+  repeated risk_data_type data_type =1; //订阅参数类型
+}
+
+//返回订阅响应
+message SubRiskResp 
+{
+  required int32  ret_code = 1;//错误码
+  optional string  msg = 2;//错误信息
+}
+
+//禁用配对风控/启动配对风控
+message BanPairControlReq
+{
+  required uint32  ret = 1;//0表示开启，1表示关闭  
+}
+
+message BanPairControlResp
+{
+  required int32  ret_code = 1;//错误码
+  optional string  msg = 2;//错误信息
+}
+
+message QueryBanPairControlState
+{
+  required uint32  ret = 1;//0表示开启，1表示关闭  
+}

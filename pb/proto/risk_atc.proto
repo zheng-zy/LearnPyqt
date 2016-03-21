@@ -1,0 +1,78 @@
+//ATC模块 风控参数设置协议文件
+package risk_atc;
+
+message atc_order_set_info
+{
+  optional uint32 all_future_order_volume_second = 1;    //ATC单位时间期货报单:所有期货,每多少秒
+  optional uint32 all_future_order_volume_most = 2; //ATC单位时间期货报单:所有期货,最多可报单多少张 
+  optional uint32 IF_future_order_volume_second = 3;    //ATC单位时间期货报单:IF期货,每多少秒
+  optional uint32 IF_future_order_volume_most = 4; //ATC单位时间期货报单:IF期货,最多可报单多少张 
+  optional uint32 IC_order_volume_second = 5;    //ATC单位时间期货报单:IC期货,每多少秒
+  optional uint32 IC_order_volume_most = 6; //ATC单位时间期货报单:IC期货,最多可报单多少张 
+  optional uint32 IH_order_volume_second = 7;    //ATC单位时间期货报单:IH期货,每多少秒
+  optional uint32 IH_order_volume_most = 8; //ATC单位时间期货报单:IH期货,最多可报单多少张 
+  optional uint32 combin_order_button_second = 9;  //自动化申赎按钮:"组合申购"每多少秒
+  optional uint32 combin_order_button_click = 10;  //自动化申赎按钮:"组合申购"最多可点击多少次
+  optional uint32 combin_redem_button_second = 11;  //自动化申赎按钮:"组合赎回"每多少秒
+  optional uint32 combin_redem_button_click = 12;  //自动化申赎按钮:"组合赎回"最多可点击多少次
+  optional uint32 order_button_second = 13;  //自动化申赎按钮:"申购"每多少秒
+  optional uint32 order_button_click = 14;  //自动化申赎按钮:"申购"最多可点击多少次
+  optional uint32 redem_button_second = 15;  //自动化申赎按钮:"赎回"每多少秒
+  optional uint32 redem_button_click = 16;  //自动化申赎按钮:"赎回"最多可点击多少次
+};
+
+//ATC风控参数设置请求
+message ATC_Order_Set_Req
+{
+  required atc_order_set_info  atc_order = 1;
+};
+
+//ATC风控参数设置返回 
+message ATC_Order_Set_Resp
+{
+  required int32 ret_code = 1;  //0表示返回操作成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+};
+
+//ATC风控参数查询返回
+message ATC_Order_Query_Info
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional atc_order_set_info  atc_order = 2;  // 返回历史设置信息,第一次返回没有值
+  optional string msg = 3;      //当返回有错误的时候，填充错误信息   
+};
+
+//ATC界面交易按钮操作频率风控设置
+message atc_button_set_info
+{
+  optional uint32 combo_create_second = 1; //"组合申购",每多少秒
+  optional uint32 combo_create_click = 2;  //"组合申购",最多允许点击多少次
+  optional uint32 combo_redeem_second = 3; //"组合赎回",每多少秒
+  optional uint32 combo_redeem_click = 4;  //"组合赎回",最多允许点击多少次
+  optional uint32 button_create_second = 5; //单独"申购"按钮点击，每多少秒
+  optional uint32 button_create_click = 6;  //单独"申购"按钮点击,最多允许点击多少次
+  optional uint32 button_redeem_second = 7; //单独"申购"按钮点击，每多少秒
+  optional uint32 button_redeem_click = 8;  //单独"申购"按钮点击,最多允许点击多少次
+};
+
+//ATC界面交易按钮设置请求 
+message ATC_Button_Set_Req
+{
+  required atc_button_set_info  atc_button = 1; 
+};
+
+//ATC界面交易按钮设置返回
+message ATC_Button_Set_Resp
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional string msg = 2;      //当返回有错误的时候，填充错误信息   
+};
+
+//ATC界面交易按钮查询返回 
+message ATC_Button_Query_Info
+{
+  required int32 ret_code = 1;  //0表示返回成功
+  optional atc_button_set_info  atc_button = 2;  // 返回历史设置信息,第一次返回没有值
+  optional string msg = 3;      //当返回有错误的时候，填充错误信息   
+};
+

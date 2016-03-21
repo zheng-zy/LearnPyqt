@@ -1,0 +1,141 @@
+package logic;
+
+//包头为8字节： 前4字节为整形，保存包体长度，紧接着一个4字节包类型(含2字节系统区号和2字节子类型)。
+//|       1|       2|       3|       4|       5|       6|       7|       8|       9|      24|...包体长度+24|
+//|<-------------uint_32------------->|<-----uint_16--->|<-----uint_16--->|<-----16bytes--->|<---binary--->|
+//|             包体长度(不含包头长度)|         系统区号|         包子类型|        requestid|          包体|
+//logic 使用的系统区号为0x0004，包类型使用以下包
+
+
+//包子类型：0x9000
+//现货挂单策略参数
+message PendingPolicy
+{     
+    required string            stkid                    = 1;              //股票代码
+    optional int32             activeflag               = 2;              //是否激活 0表示停止策略；1表示开始策略；2knock_amt参数清零；3停止策略不撤单；4清除无风险挂单量
+    optional int32             pending_qty              = 3;              //挂单数量
+    optional double            cancel_spd              = 4;              //撤单阈值
+    optional int32             level_qty                = 5;              //挂单档数
+    optional int32             qty_perlevel             = 6;              //每档挂单笔数
+    optional double            accu_th_amt              = 7;              //品种累积成交市值阈值 单位为10000
+    optional double            knock_amt                = 8;              //某品种当前已成交市值累计
+    optional int32             pool_size                = 9;              //同一时刻委托成交数量阈值
+    optional int32             total_num                = 10;             //当日总委托成交报单阈值
+	message future_th{
+		required string fut_id		= 1;	//期货ID
+		required double the_th		= 2;	//开仓基差
+	}
+    repeated future_th         fut_th_li                = 11;             //开仓基差列表
+    required string            traderid                 = 12;             //交易员ID
+    required string            productid                = 13;             //产品ID
+    optional int32             rf_flag                  = 14;             //0-代表没有无风险挂单， 1-代表有无风险挂单
+    optional double            discount                 = 15;             //溢价点数
+    optional int32             max_num                  = 16;             //满足max_num就申购赎回
+    optional double            rf_accu_th_qty           = 17;             //无风险挂单成交股数阈值,单位为股(rf_knock_qty无风险成交股数达到此阈值时，不再做无风险操作)
+    optional int32             stop                     = 18;             //如果设置这个值，表示停止策略
+    optional double            the_amt                  = 19;             //所有品种的成交累计
+    required string            policy_type              = 20;             //策略类型，“0” 表示正向, “1” 表示反向 
+	required int32             level_inter              = 21;             //挂单价格档位间隔， 0表示不跳档位，1代表间隔一个价格档位
+	optional int32             future_reorder_step      = 22;             //期货自动撤补的调整点数
+	optional int32             future_reorder_interval  = 23[default=5000];//期货撤补间隔，单位毫秒，默认5000毫秒
+	optional int32             future_reorder_max_times = 24;             //期货自动撤补的最大次数
+	required int32             price_ratio              = 25;             //风控参数配置的篮子买卖最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。(无风险挂单时需要此参数)
+	required uint32            delayed_single           = 26;             //风控参数配置的单只股票延时参数
+	required uint32            delayed_max              = 27;             //风控参数配置的最大延迟参数
+	required int32             single_fut_hedge_percent = 28;             //头寸超过某一期货合约市值的百分比（放一张该期货合约） 单位为%
+	required int32             if_hedge_percent         = 29;             //累计多个期货合约头寸超过IF期货合约市值的百分比（放一张IF期货合约） 单位为%
+	optional uint32            premium_ratio            = 30;             //期货溢价比例, 买入的时候不能高于溢价比例 基数为100000
+	optional uint32            discount_ratio           = 31;             //期货折价比例, 卖出的时候不能低于折价比例 基数为100000
+	optional uint32            etf_iopv_premium_ratio   = 32;             //ETF溢价比例, ETF买入的时候不能高于溢价比例 基数为100000
+	optional uint32            etf_iopv_discount_ratio  = 33;             //ETF折价比例, ETF卖出的时候不能低于溢价比例 基数为100000
+	optional int32             a1_reserved_pos          = 34;             //A1策略预留现货头寸
+}
+
+//包子类型：0x9002
+//期货挂单参数
+message FutSwapPolicy
+{
+    optional int32             pool_size        = 1;  //同一时刻触发期货阈值
+    optional int32             total_num        = 2;  //期货触发总数
+    optional int32             th_net           = 3;  //单次跨期张数阈值
+    optional double            pos_spread       = 4;  //正向跨期基差触发阈值
+    optional double            neg_spread       = 5;  //反向跨期基差触发阈值
+    required string            curr_fut         = 6;  //当月合约设定
+    required string            next_fut         = 7;  //下月合约设定
+    required int32             curr_is_act      = 8;  //否设定当月为合约活跃月 1-表示True 0-表示False
+    optional int32             curr_tri_qty     = 9;  //curr跨期张数
+    optional int32             next_tri_qty     = 10;  //next跨期张数
+    required string            traderid         = 11; //交易员ID
+    required string            productid        = 12; //产品ID
+    optional int32             stop             = 13; //如果设置这个值，表示停止策略
+	required int32             reorder_flag     = 14; //自动撤补标志 0表示不需要自动撤补；1表示开启自动撤补
+	optional int32             reorder_interval = 15[default=3000]; //自动撤补间隔，单位毫秒，默认3000毫秒
+	optional int32             reorder_max_times = 16;//自动撤补的最大次数
+	required int32             active_per       = 17; //是否按涨跌百分比设置阈值  0：否   1：是
+	optional double            pos_per          = 18; //正向跨期涨跌百分比触发阈值 扩大100倍
+	optional double            neg_per          = 19; //反向跨期涨跌百分比触发阈值 扩大100倍
+	optional uint32            premium_ratio    = 20; //期货溢价比例, 买入的时候不能高于溢价比例 基数为100000
+	optional uint32            discount_ratio   = 21; //期货折价比例, 卖出的时候不能低于折价比例 基数为100000
+} 
+
+//包子类型：0x9003
+//策略返回
+message PolicyResp
+{
+    required int32             ret_code      = 1;  //错误码，0 成功， id为返回的策略ID。 其他 不成功， id为 错误信息
+    required string            key           = 2;  //返回主键
+    required string            policy_type   = 3;  //策略类型，“0” 表示正向, “1” 表示反向 “2” 跨期
+}
+
+//包子类型：0x9004
+//策略状态
+message PolicyStatus
+{
+    required string            key              = 1;  //正向挂单是stkid，跨期是product_id|trader_id|curr_fut|next_fut
+    required string            status           = 2;  //状态处理		
+    optional double            knock_amt        = 3;  //成交回报值
+    optional int32             finished         = 4;  //成功结束
+    optional int32             failed           = 5;  //失败
+    optional int32             part             = 6;  //部分成交
+    optional int32             create           = 7;  //创建
+    optional int32             progressed       = 8;  //正在处理 
+    required string            policy_type      = 9;  //策略类型，“0” 表示正向, “1” 表示反向 “2” 跨期
+	optional int32             rf_knock_qty     = 10; //无风险成交股数（单位为股）
+    
+}
+
+//包子类型：0x9005
+//策略头寸
+message PolicyPosition
+{
+    required double            position        = 1;   //头寸处理
+	required double            total_amt       = 2;   //A1现货累计成交市值
+    required string            policy_type     = 3;   //策略类型，“0” 表示正向, “1” 表示反向 “2” 跨期
+}
+
+//查询策略
+//包子类型：0x9006
+message QueryPolicy
+{
+    required string trader_id = 1;   //交易员
+}
+
+//清除头寸
+//包子类型：0x9007
+message PostionClear
+{ 
+    required string policy_type  = 1;  //策略类型，“0” 表示正向, “1” 表示反向 
+}
+
+//清空“Knock_Amt”、“rf_Knock_Qty”、“Position”、“Total_Amt”所有的累计数值
+//包子类型: 0x9008
+message ResetAll
+{
+	required string policy_type = 1;   //策略类型， “0”表示正向， “1”表示反向
+}
+
+
+//包子类型：0x0FFF 心跳包
+//包子类型: 0x8FFF 心跳应答
+
+

@@ -1,0 +1,27 @@
+// define error number
+
+
+enum status
+{
+    SUCCESS                             = 0x0;
+    ERROR_UPDATE                        = 0x1;
+    ERROR_RELOGIN                       = 0x2;
+    ERROR_DISCONNECT                    = 0x3;
+    ERROR_WAIT                          = 0x4;
+    ERROR_NOT_EXIST                     = 0x5;
+    ERROR_RATE_OUT_OF_RANGE             = 0x6;
+    ERROR_NO_WITHDRAWAL                 = 0x7;
+    ERROR_NOT_EXIST_STOCK               = 0x8;
+    ERROR_NOT_EXIST_FUTURE              = 0x9;
+    ERROR_NOT_EXIST_POLICY              = 0xa;
+    ERROR_NOT_BASKET_POLICY             = 0xb;
+    ERROR_NOT_WITHDRAW_STATUS           = 0xc;
+
+
+//    ERROR_STOCK                       = 0x100;
+//    ERROR_FUTURE                      = 0x300;
+//    ERROR_RISK                        = 0x500;
+
+}
+
+

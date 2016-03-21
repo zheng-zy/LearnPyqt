@@ -1,0 +1,43 @@
+//  独立风控部分
+package risk_independent_control;
+
+message risk_control_info
+{
+  optional int32 ban_buy_trade = 1;//禁止买交易
+  optional int32 restore_buy_trade = 2;//恢复买交易
+  optional int32 ban_sell_trade = 3;//禁止卖交易
+  optional int32 restore_sell_trade = 4;//恢复卖交易
+};
+
+//独立风控请求包
+message Risk_Control_Set_Req
+{
+  required string product_account_id = 1;   //产品账号ID
+  required uint32  product_type = 2;      //1:表示现货,2:表示期货 
+  required risk_control_info control_info = 3; 
+};
+
+//独立风控应答
+message Risk_Control_Set_Resp
+{
+  required int32 ret_code = 1;  //0表示返回操作成功
+  required string product_account_id = 2;  //产品账号ID
+  optional string msg = 3;  //当返回有错误的时候，填充错误信息  
+};
+
+message product_trade_info
+{
+  optional string product_account_id = 1;  //产品账号ID
+  optional uint32  product_type = 2;      //1:表示现货,2:表示期货 
+  optional risk_control_info control_info = 3; //返回历史设置信息,第一次返回没有值 
+};
+
+//独立风控界面参数查询返回
+message Risk_Control_Query_Info
+{
+  required int32 ret_code = 1;            //0表示返回成功
+  repeated product_trade_info product_info = 2; //对应界面期货，现货分开显示
+  optional string msg = 3;  //当返回有错误的时候，填充错误信息  
+};
+
+

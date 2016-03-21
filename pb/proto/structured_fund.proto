@@ -1,0 +1,30 @@
+package quota;
+
+//包头为8字节： 前4字节为整形，保存包体长度，紧接着一个4字节包类型(含2字节系统区号和2字节子类型)。
+//|       1|       2|       3|       4|       5|       6|       7|       8|       9|      24|...包体长度+24|
+//|<-------------uint_32------------->|<-----uint_16--->|<-----uint_16--->|<-----16bytes--->|<---binary--->|
+//|             包体长度(不含包头长度)|         系统区号|         包子类型|        requestid|          包体|
+
+message structured_fund
+{
+	required string m_stk_id                  = 1; // 母基金代码
+	required string a_stk_id                  = 2; // A类基金代码
+	required string b_stk_id                  = 3; // B类基金代码
+	required string m_stk_id_name             = 4; // 母基金名称
+	required string a_stk_id_name             = 5; // A类基金名称
+	required string b_stk_id_name             = 6; // B类基金名称
+	required string m_trace_index             = 7; // 跟踪指数
+	required string m_trace_index_name        = 8; // 跟踪指数名称
+	required int32  a_ratio                   = 9; // A类基金占比
+	required int32  b_ratio                   = 10; // B类基金占比
+	required int32  pub_time                  = 11; // 服务器发布的时间（HHMMSSmmm）
+}
+
+message TradedayMsg
+{
+	required int32 flag                       = 1;  // 1:交易日 0:非交易日
+	required int32 cur_tradeday                   = 2;  // 交易日期 YYYYMMDD, 非交易日该字段等于0
+	required int32 pre_tradeday               = 3;  // 前一交易日期 YYYYMMDD, 非交易日该字段等于0
+	required int32 next_tradeday              = 4;  // 下一交易日期 YYYYMMDD, 非交易日该字段等于0
+	required int32 weekday                    = 5;  // 星期几, 周一值为1,周二值为2,等等; 非交易日该字段等于-1
+}

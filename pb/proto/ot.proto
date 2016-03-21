@@ -1,0 +1,553 @@
+
+// 礼一数据协议——行情
+
+/*
+4字节    | 2字节    | 2字节    | 16字节     |
+uint_32  | uint_16  | uint_16  | binary     | binary
+包体长度 | 系统区号 | 包子类型 | requesetid | 包体
+*/
+
+import "base.proto";
+import "stock_trade.proto";
+
+
+
+package ly.ot;
+
+enum ot_version
+{
+    MAJOR                               = 0;
+    MINOR                               = 1;
+}
+
+// 篮子操作策略
+// CMD_BASKET_ORDER_REQ
+// message BasketPolicyReq
+// {
+//     required string         code        = 1;        // 股票代码 etf code
+//     required price_level    pl          = 2;        // 价格
+//     required uint32         qty         = 3;        // 数量
+//     // 买卖标记 OPR_BUY, OPR_SELL OPR_BASEKET_SUBMIT OPR_BASEKET_COMPLETE OPR_BASEKET_AUTO
+//     required operation_type opr         = 4;
+//     optional bytes          policy_id   = 5;        // 策略ID
+// }
+
+message BasketCustomReq
+{
+    repeated    stock_trade.SingleOrderReq       stocks = 1;
+}
+
+// 不发送成交回报,委托回报, 只发送 BasketPolicyResp
+message BasketPolicyResp
+{
+    required    int32       ret_code            = 1;
+    optional    bytes       policy_id           = 2;
+    optional    float       rate                = 3;        //完成百分比
+    optional    int32       ksh_count           = 4;        //可赎回数
+    optional    double       yg_cost            = 5;        //预估成本
+    optional    double       finished_asset     = 6;        // 已成金额
+    optional    double       finished_iopv      = 7;        // 已成净值
+}
+
+message BasketWithdrawalReq
+{
+    required string policy_id       = 1;
+}
+
+message BasketWithdrawalResp
+{
+    required int32      ret_code     = 1;            //0成功，其他失败
+    optional string policy_id        = 2;
+}
+
+// 未完成篮子(lymtc_basket_unfinished)
+// message BasketUnfinishedReq
+// {
+// }
+
+// 未完成篮子反馈(lymtc_basket_unfinished_resp)
+message BasketInfo
+{
+    optional    string      code            = 1;        //篮子代码
+    required    int32       volume          = 2;        //篮子数量
+    required    operation_type opr          = 3;        //篮子方向
+    required    float       money           = 4;        //已成金额
+    required    float       rate            = 5;        //完成百分比
+    required    int64       policyid        = 6;        //策略id
+}
+
+message BasketUnfinishedResp
+{
+    required    int32       ret_code    = 1;
+    repeated    BasketInfo  baskets     = 2;        //篮子信息
+}
+
+// 分级基金操作
+// CMD_GRADED_FUND_REQ
+/// message GradingFundReq
+/// {
+///     //操作类型
+///     // OPR_BUY
+///     // OPR_SELL
+///     // OPR_BUY_BA
+///     // OPR_SELL_BA
+///     // OPR_COMBINE
+///     // OPR_SPLIT
+///     // OPR_BUY_COMBINE
+///     // OPR_FAST_COMBINE
+///     // OPR_SPLIT_SELL
+///     // OPR_FAST_SPLIT
+///     // OPR_FAST_SPLIT_B
+///     // OPR_FAST_SPLIT_S
+///     required    operation_type opr          = 1;
+///     required    string          code_a      = 2;
+///     required    string          code_b      = 3;
+///     required    string          code_m      = 4;
+///     required    int64           qty_m       = 5;   // qty_m 是 母基金的总量
+///     required    int32           rate_a      = 6;   // a 基金的比例
+///     required    int32           rate_b      = 7;   // b 基金的比例  rate_a + rate_b === 10
+///     optional    price_level     pl          = 8;   // 默认 PRICE_2_PERCENT
+///     optional    linkage_ab      linkage     = 9;   // 联动A,B
+/// }
+
+message PolicyResp // include CMD_BASKET_WITHDRAWAL_RESP CMD_FUND_ORDER_RESP CMD_GRADED_FUND_RESP
+{
+    required int32      ret_code     = 1;            //0成功，其他失败
+    optional string policy_id        = 2;
+}
+
+// CMD_SUB_ETF_INFO_REQ
+message EtfInfoSubReq
+{
+    optional    string      code    = 1; // 股票代码   如果是自定义基差改 code 不存在,其他情况必须有
+    optional    int32       sub     = 2; // 订阅标识
+}
+
+message EtfInfoSubResp
+{
+    required    int32       ret_code    = 1; // return code
+    required    string      code        = 2; //
+}
+
+message CustomBasisInfo
+{
+    required    string      code = 1;
+    required    int64       qty  = 2;
+}
+
+message CustomBasisSubReq
+{
+    repeated    CustomBasisInfo     stocks  = 1;
+    optional    int32               sub     = 2; // 订阅标识
+}
+// message CustomBasisSubReq == message EtfInfoSubResp
+
+
+// CMD_SUB_ETF_INFO_LIMIT_UP_REQ
+// CMD_SUB_ETF_INFO_LIMIT_DOWN_REQ
+// CMD_SUB_ETF_INFO_STOP_REQ
+// CMD_SUB_ETF_INFO_MAXPRICE_REQ
+// CMD_SUB_ETF_INFO_MINPRICE_REQ
+// CMD_SUB_ETF_INFO_DIOPV_B1_REQ
+// CMD_SUB_ETF_INFO_DIOPV_S1_REQ
+message  EtfInfoUpdateReq
+{
+    required    string      code       = 1; //
+
+    // 涨停市值 // 跌停市值 // 停牌市值
+    // 最高买入价 // 最低卖出价 //
+    // diopvB1  卖一价计算iopv // diopvS1  买一价计算iopv
+    optional    double      value      = 2;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+//价格档位值枚举：
+//该价格档位直接用三期的。
+//需要注意的是，PriceLevel不用枚举传参，而是使用uint32传参。因为档位价需要另外算。
+enum PriceLevel
+{
+    //假如传入的价格档位int32 price_level = 102，则有：
+    //switch(price_level)
+    //{
+    //case kPriceLevelLast:
+    //    {...
+    //     break;
+    //    }
+    //case ...://处理kPriceLevelLast 到 kPriceLevelWeightedAvgSell之间的情况
+    //    {...}
+    //case kPriceLevelWeightedAvgSell:
+    //    {...
+    //     break;
+    //    }
+    //default:
+    //    {
+    //        std::size_t N = price_level % 100;
+    //        switch(price_level/100)
+    //        {
+    //        case quotation::kPriceLevelSell:
+    //        {
+    //            if(market_data.ask_price_size() > N)
+    //            {
+    //                //会在这里取到卖3价
+    //                result_price = market_data.ask_price(N);
+    //            }
+    //            else
+    //            {
+    //                //没有这个档位
+    //            }
+    //        }
+    //        case quotation::kPriceLevelBuy:
+    //        {
+    //            if(market_data.bid_price_size() > N)
+    //            {
+    //                result_price = market_data.bid_price(N);
+    //            }
+    //            else
+    //            {
+    //                //没有这个档位
+    //            }
+    //        }
+    //        default:
+    //        {
+    //            //没有这个档位
+    //        }
+    //    }
+    //}
+
+    kPriceLevelNone = 0;
+    //spN, 卖1价~卖100价
+    kPriceLevelSell = 1; //必须从 1 开始，从0开始容易出错
+    //bpN, 买1价~买100价,
+    kPriceLevelBuy  = 2;
+
+    kPriceLevelLast            = 3; //last         最新价
+    kPriceLevelHighLimit       = 4; //highlimit    涨停价
+    kPriceLevelLowLimit        = 5; //lowlimit     跌停价
+    kPriceLevelOpen            = 6; //open         开盘价
+    kPriceLevelHigh            = 7; //high         最高价
+    kPriceLevelLow             = 8; //low          最低价
+    kPriceLevelClose           = 9; //close        收盘价
+    kPriceLevelPreClose        = 10;//preclose     前收价
+    kPriceLevelSettle          = 11;//settle       结算价
+    kPriceLevelPreSettle       = 12;//presettle    前结算价
+    kPriceLevelWeightedAvgBuy  = 13;//weighted_avg_bid_price    加权平均委买价格
+    kPriceLevelWeightedAvgSell = 14;//weighted_avg_ask_price    加权平均委卖价格
+};
+
+
+//错误结构体。
+message Error
+{
+    optional    uint64     time_stamp                  = 1; //时间戳
+    required    uint32     code                        = 2; //错误码，不为0，则存在错误
+    optional    string     reason                      = 3; //原因
+}
+
+
+//终止策略
+//终止的策略就结束了。
+message StopPolicy
+{
+    required    bytes      policy_id                   = 1; //策略id
+    required    bool       cancel_flag                 = 2; //终止的时候是否进行撤单，默认值为true
+}
+
+//暂停策略
+//和终止策略差不多，都是撤单。区别是暂停的策略还能恢复执行状态；而终止的策略就结束了。目前作用不大。
+message PausePolicy
+{
+    required    bytes      policy_id                   = 1; //策略id
+}
+
+message AutoReoderParam
+{
+  required    uint32     price_level       = 1; //自动撤补时候，所选择的价格档位。自动化用到。
+  required    uint32     interval          = 2; //自动撤补间隔。
+  optional    uint32     max_times         = 3; //自动撤补的最大次数。超出这个次数就不再撤补。0表示无限自动撤补。自动化用到。
+  optional    int32      step              = 4; //自动撤补在reorder_price_level基础上调整的点数。扩大10000倍的值。自动化用到。
+}
+
+//撤补策略。
+//目前表示以下几种撤补情况：
+//1.补单、普通撤补：传递price_level。
+//2.自动撤补：传递price_level、reorder_interval、reorder_max_times。
+message ReorderPolicy
+{
+    required    bytes      policy_id                   = 1; //策略id
+    oneof reorder_type
+    {
+                uint32     price_level                 = 2; //手动撤补价格档位
+                AutoReoderParam auto_reorder_param     = 3; //自动撤补选项
+    }
+}
+
+//替代补足策略。
+//替代补足的目标是专家模式(expert_mode == true)的篮子买策略。目前在手工篮子界面有用到。
+message ReplaceFillPolicy
+{
+    required    bytes      policy_id                   = 1; //策略id
+    repeated    string     open_codes                  = 2; //风控开启项目
+}
+
+
+//订阅策略请求
+//订阅后，会主动推送PolicyStatus。
+message SubscribePolicyRequest
+{
+    optional    bytes      policy_id                   = 1; //订阅指定的policy_id。
+    optional    uint32     type                        = 2; //订阅类型，在policy_id没有设置的时候有效。目前仅支持：0：取消订阅；1：全部订阅；2：手工篮子订阅（只会推送ExpertMode的篮子）；3：创建策略订阅（只推送后续创建的策略）
+}
+
+//订阅策略响应
+message SubscribePolicyResponse
+{
+    required    Error      result                      = 1; //订阅响应结果。
+}
+
+
+//一些特殊参数，每个策略都支持不同的特殊参数
+message Parameter
+{
+    required string   key              = 1; //参数名
+    optional string   value_string     = 2; //参数的字符串值
+    optional double   value_double     = 3; //参数的浮点值
+    optional fixed32  value_uint_32    = 4; //参数的无符号32位整形值
+    optional sfixed32 value_int_32     = 5; //参数的有符号32位整形值
+    optional fixed64  value_uint_64    = 6; //参数的无符号64位整形值
+    optional sfixed64 value_int_64     = 7; //参数的有符号64位整形值
+}
+
+
+//在策略的执行过程中，会不断的推送策略的运行状态PolicyStatus给策略的发起者以及订阅者。
+//策略状态：
+//created    : 创建状态，为中间态。如果初始化成功，则进入该状态
+//failed     : 失败状态，为结束态。初始化失败，或者中间产生了错误，则转换为这个状态。通常err有值。
+//progressed : 策略执行状态，为中间态。
+//paused     : 暂停状态，为中间态。暂停的策略不会有成交过程。
+//finished   : 完成状态，为结束态。通常只有全部完成才算完成，进度通常为100%。
+//cancelled  : 撤销状态，为结束态。通常被客户端主动停止，或是其中某一些委托被其他程序撤销，进度没有到达100%。
+//在创建策略的时候，PolicyStatus最开始会先返回创建情况created / failed，可以作为创建策略的响应。
+//客户端可以根据type的不同，区别出对应的策略是什么。
+//PolicyStatus最终将到达结束态："finished", "cancelled"，"failed"。
+//注意：策略状态推送所使用的request_id必须和该策略的创建者相同。
+message PolicyStatus
+{
+    optional    bytes      policy_id                   = 1; //策略id号
+    optional    policy_type type                       = 2; //策略类型。这里直接显示策略的名称。TODO：采取字符串的方式对客户端不太友好，需要考虑是否替换。
+    required    uint64     time_stamp                  = 3; //时间戳。从1970.1.1到现在的毫秒数。
+    optional    Error      err                         = 4; //错误信息。
+    required    string     status                      = 5; //状态："failed","created","progressed","paused","finished", "cancelled"
+    required    uint32     status_id                   = 6; //状态id，一个policy session期内不断递增
+    optional    double     percentage                  = 7; //进度百分比。取值为：0.0->1.0
+    optional    uint64     start_time                  = 8; //起始时间。从1970.1.1到现在的毫秒数。
+    optional    uint64     end_time                    = 9; //结束时间。从1970.1.1到现在的毫秒数。
+    optional    uint64     b_s_amount                  = 10; //买入现货金额
+    optional    uint64     s_s_amount                  = 11; //卖出现货金额
+    optional    uint64     b_f_amount                  = 12; //买入期货金额
+    optional    uint64     s_f_amount                  = 13; //卖出期货金额
+    optional    uint64     match_volume                = 14; //单品种交易时的总成交量
+    //附加参数。例如在篮子中，它包含了"ExpectedAmount（预估金额）", "PV（已成净值）", "Volume（篮子数）", "Code（篮子ETF代码，如果有的话）",
+    //"CustomItems（自定义篮子项目，Code,Volume循环显示，如果有的话）", "ProgressDetails（篮子进度明细,Code,Volume,state循环显示,state有：0：正常；1：失败；2：被替代；3：停牌；4：篮子股票禁买禁卖；5：涨跌停禁买禁卖，expert_mode才有）"
+    repeated    Parameter  parameters                  = 15;
+    optional    string     logic_type                  = 16; //logic_center策略类型。手动客户端会使用LogicTypeManual。
+    required    string     robot_ip                    = 17; //robot的IP地址
+    optional    string     trader_id                   = 18; //交易员id。
+    optional    string     trader_ip                   = 19; //交易员ip。
+    optional    policy_direction direction             = 20; //买卖方向
+}
+
+
+//策略基本参数
+//所有下方的策略都包含了一个策略基本参数。
+message PolicyBaseParam
+{
+    required    policy_direction direction             = 1; //买卖方向。0：买、申、买+申、快申等；1：卖、赎、赎+卖、快赎等
+    required    string     trader_id                   = 2; //交易员id。
+    required    string     trader_ip                   = 3; //交易员ip。
+    optional    string     logic_type                  = 4; //logic_center策略类型。客户端填写：LogicTypeManual。这将作为判断手工还是自动化的标志。
+}
+
+//单笔现货买卖。
+//用于股票买卖；ETF买卖；分级基金买卖。
+//根据direction的不同，分为StockBuyPolicy、StockSalePolicy两个子策略。
+//对应于PolicyStatus中的type为"StockBuyPolicy"、"StockSalePolicy"。
+message StockPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //证券代码
+    required    uint32     volume                      = 3; //数量
+    oneof price_type {
+      uint32 price_level = 4; //价格档位。在不同的策略中，价格可能表示不同地方使用
+      int64 price = 5; //价格(扩大10000倍后的值)
+    }
+    optional    uint32     iopv_price_ratio            = 6; //风控参数配置的ETF买卖折溢价比例范围，超出这个比例的下单失败。基数为 100000，例如最新价上浮2%下单，则此处填 2000
+    optional    uint32     reorder_interval            = 7; //撤补间隔(现货定时买卖时填写，期货每笔都填，默认为客户端直接填写1000，0表示不启用)。目前没用，先保留。
+}
+
+//单笔期货买卖。
+//用于期货买卖、自动化跨期、自动化正反向。
+//根据direction的不同，分为FutureBuyPolicy、FutureSalePolicy两个子策略。
+//对应于PolicyStatus中的type为"FutureBuyPolicy"、"FutureSalePolicy"。
+message FuturePolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //证券代码
+    required    uint32     volume                      = 3; //数量
+    oneof price_type
+    {
+                uint32     price_level                 = 4; //价格档位。在不同的策略中，价格可能表示不同地方使用
+                int64      price                       = 5; //价格(扩大10000倍后的值)
+    }
+    optional    uint32     price_ratio                 = 6; //风控参数配置的折溢价限制比例，超出这个比例的下单失败。基数为 100000，例如最新价上浮2%下单，则此处填 2000
+    required    uint32     open_close_flag             = 7; //开平仓标志。0:自动；1:开仓；2:平仓
+    optional    AutoReoderParam auto_reorder_param     = 8; //自动撤补选项
+}
+
+//自定义篮子项。
+message CustomBasketItem
+{
+    required    string     code                        = 1; //证券代码
+    required    uint32     replace_flag                = 2; //替代标志。0：不替代；1：替代
+    required    uint32     volume                      = 3; //数量
+}
+
+//篮子买卖。
+//在篮子买卖界面用。
+//根据direction的不同，分为StockBasketBuyPolicy、StockBasketSalePolicy两个子策略。
+//对应于PolicyStatus中的type为"StockBasketBuyPolicy"、"StockBasketSalePolicy"。
+message StockBasketPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    optional    string     code                        = 2; //ETF代码（统一填二级市场代码）
+    required    uint32     volume                      = 3; //篮子数
+    optional    uint32     price_level                 = 4; //价格档位。在篮子买卖界面用。
+    optional    uint32     price_ratio                 = 5; //风控参数配置的篮子买卖最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。在快速申赎界面用。同时，该参数也是折溢价限制比例，超出这个比例的下单失败（price_level存在的话）。
+    repeated    CustomBasketItem custom_items          = 6; //自定义篮子列表。如果有，则进行自定义篮子买卖，code无效，但会在PolicyStatus中返回。
+    required    bool       expert_mode                 = 7; //专家模式。专门为篮子买卖界面设计，开启后支持替代补足、未完成篮子明细相关处理。
+}
+
+
+//ETF申赎、分级基金申赎。
+//在快速申赎界面、篮子买卖界面、分级基金交易界面用。
+//根据direction的不同，分为StockCreationPolicy、StockRedemptionPolicy两个子策略。
+//对应于PolicyStatus中的type为"StockCreationPolicy"、"StockRedemptionPolicy"。
+message StockCreateOrRedeemPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //股票代码（统一填二级市场代码）
+    required    uint32     volume                      = 3; //申赎数量
+}
+
+//ETF买+申、赎+卖。
+//在快速申赎界面、自动化申赎界面使用。
+//根据direction的不同，分为BuyAndCreationPolicy、RedemptionAndSalePolicy两个子策略。
+//对应于PolicyStatus中的type为"BuyAndCreationPolicy"、"RedemptionAndSalePolicy"。
+message ETFBCOrRSPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //ETF代码（统一填二级市场代码）
+    required    uint32     volume                      = 3; //篮子(申赎)数量
+    required    uint32     price_ratio                 = 4; //风控参数配置的篮子买卖最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。
+    required    uint32     delayed_single              = 5; //风控参数配置的单只股票延时参数。
+    required    uint32     delayed_max                 = 6; //风控参数配置的最大延迟参数。
+}
+
+//ETF快申、快赎。
+//在快速申赎界面。
+//根据direction的不同，分为QuickCreationPolicy、QuickRedemptionPolicy两个子策略。
+//对应于PolicyStatus中的type为"QuickCreationPolicy"、"QuickRedemptionPolicy"。
+message ETFQuickPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //ETF代码（统一填二级市场代码）
+    required    uint32     volume                      = 3; //篮子(申赎)数量
+    required    int64      price                       = 4; //买卖ETF的价格
+    required    uint32     price_ratio                 = 5; //风控参数配置的篮子买卖最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。
+    required    uint32     delayed_single              = 6; //风控参数配置的单只股票延时参数。
+    required    uint32     delayed_max                 = 7; //风控参数配置的最大延迟参数。
+    optional    uint32     iopv_price_ratio            = 8; //风控参数配置的ETF买卖折溢价比例范围。
+}
+
+//ETF基差正向策略。
+//在自动化申赎界面使用。
+//根据direction的不同，分为SpreadCreationPositiveTakingPolicy、SpreadRedemptionPositiveClosePolicy两个子策略。
+//对应于PolicyStatus中的type为"SpreadCreationPositiveTakingPolicy"、"SpreadRedemptionPositiveClosePolicy"。
+message ETFSpreadPositivePolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //ETF代码（统一填二级市场代码）
+    required    uint32     volume                      = 3; //篮子(申赎)数量
+    required    uint32     price_ratio                 = 4; //风控参数配置的篮子买卖最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。
+    required    uint32     delayed_single              = 5; //风控参数配置的单只股票延时参数。
+    required    uint32     delayed_max                 = 6; //风控参数配置的最大延迟参数。
+    required    string     future_code                 = 7; //期货代码
+    optional    uint32     future_price_ratio          = 8; //风控参数配置的期货折溢价限制比例，超出这个比例的下单失败。基数为 100000，例如最新价上浮2%下单，则此处填 2000
+    required    double     future_start_threshold      = 9; //风控参数配置的当买入的股票总市值达到或者超过百分比后，进行期货买卖。
+    required    double     future_lock_threshold       = 10; //现货和单张期货对锁百分比阈值参数。用于计算期货张数使用。
+    optional    AutoReoderParam auto_reorder_param     = 11; //自动撤补选项
+}
+
+//分级基金AB联动买卖
+//A联动B，则A使用price，B使用price_level。
+//根据direction的不同，分为StructuredFundLinkBuyPolicy、StructuredFundLinkSalePolicy两个子策略。
+message StructuredFundLinkPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code_a                      = 2; //A基金代码。
+    required    string     code_b                      = 3; //B基金代码。
+    required    uint32     volume_a                    = 4; //A基金数量。
+    required    uint32     volume_b                    = 5; //B基金数量。
+    required    int64      price                       = 6; //联动发起者的价格。
+    required    uint32     price_level                 = 7; //联动目标者的价格档位。
+    required    uint32     link_direction              = 8; //联动方向。0：A联动B；1：B联动A。
+}
+
+//分级基金A+B买卖
+//A+B买卖和A联动B不太一样。输入的是母基金,并根据同样的价格浮动来处理。
+//根据direction的不同，分为StruStructuredFundABBuyPolicy、StructuredFundABSalePolicy两个子策略。
+message StructuredFundABPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //母基金代码。
+    required    uint32     volume                      = 3; //母基金数量。
+    required    uint32     price_ratio                 = 4; //AB基金最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。
+}
+
+//分级基金拆分、合并
+//根据direction的不同，分为StructuredFundSplittingPolicy、StructuredFundMergingPolicy两个子策略。
+message StructuredFundSplitOrMergePolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //母基金代码。
+    required    uint32     volume                      = 3; //母基金数量。
+}
+
+//分级基金买+合、拆+卖
+//根据direction的不同，分为StructuredFundBuyAndMergingPolicy、StructuredFundSplittingAndSalePolicy两个子策略。
+message StructuredFundBMOrSSPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //母基金代码。
+    required    uint32     volume                      = 3; //母基金数量。
+    required    uint32     price_ratio                 = 4; //母基金最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。
+}
+
+//分级基金快合、快拆
+//根据direction的不同，分为StructuredFundQuickMergingPolicy、StructuredFundQuickSplittingPolicy两个子策略。
+message StructuredFundQuickPolicy
+{
+    required    PolicyBaseParam base_param             = 1; //基本参数
+    required    string     code                        = 2; //母基金代码。
+    required    uint32     volume                      = 3; //母基金数量。
+    required    uint32     price_ratio                 = 4; //母基金最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。
+    required    uint32     ab_price_ratio              = 5; //子基金最新价格浮动比例。基数为 100000， 例如最新价上浮2%下单，则此处填 2000。
+    optional    uint32     quick_split_flag            = 6; //快拆标志，快合就不需要填写了。0：快拆（默认值）；1：快拆B；2：快拆S
+}
+
+//分级基金正向基差策略
+//根据direction的不同，分为SturcturedFundSpreadMergingPositiveTakingPolicy、StructuredFundSpreadSplittingPositiveClosePolicy两个子策略。
+//目前先不做。

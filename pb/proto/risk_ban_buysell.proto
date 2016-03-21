@@ -1,0 +1,82 @@
+//禁买禁卖股票维护
+package risk_ban_buysell;
+//产品信息
+message product_info
+{
+  required string product_id = 1;//产品
+  required string product_name = 2;//产品名称
+};
+
+//禁买禁卖信息
+message ban_buy_ban_sell_info
+{
+  repeated stock_info basket_not_ban_buy_stock = 1;  //篮子股票非禁买
+  repeated stock_info basket_not_ban_sell_stock = 2;//篮子股票非禁卖
+  repeated stock_info basket_ban_buy_stock = 3;      //篮子股票禁买
+  repeated stock_info basket_ban_sell_stock = 4;     //篮子股票禁卖
+  repeated stock_info single_ban_buy_stock = 5;      //单只股票禁买
+  repeated stock_info single_ban_sell_stock = 6;     //单只股票禁卖  
+};
+
+
+//获取产品请求
+message Product_Req
+{
+  optional string product_id = 1;//产品ID， 如果为空，请求全部产品列表
+};
+
+//产品请求应答
+message Product_Resp
+{
+  repeated product_info products = 1;//产品列表
+};
+
+//获取某个产品下的禁买禁卖清单请求
+message Stock_Ban_Req
+{
+  required string product_id = 1;//产品ID，
+};
+
+//某个产品下的禁买禁卖清单应答
+message Stock_Ban_Resp
+{
+  required string product_id = 1;//产品ID
+  optional ban_buy_ban_sell_info ban_info = 2; //禁买禁卖信息 
+};
+
+//股票信息
+message stock_info
+{
+  required string stock_code = 1;//股票代码
+  required string stock_name = 2;//股票名称
+};
+
+//禁买禁卖 添加操作请求
+message Stock_Ban_Add_Req
+{
+  required string product_id = 1; //产品ID
+  optional ban_buy_ban_sell_info ban_info = 2;//禁卖禁卖信息
+};
+
+//禁买禁卖 添加操作应答
+message Stock_Ban_Add_Resp
+{
+  required int32 ret_code = 1;//0表示返回成功
+  optional ban_buy_ban_sell_info ban_info = 2;//返回之前设置的信息
+  optional string msg = 3; //当返回有错误的时候，填充错误信息   
+};
+
+//禁买禁卖 删除操作请求
+message Stock_Ban_Del_Req
+{
+  required string product_id = 1; //产品ID
+  optional ban_buy_ban_sell_info ban_info = 2;//禁卖禁卖信息
+};
+
+//禁买禁卖 删除操作应答
+message Stock_Ban_Del_Resp
+{
+  required int32 ret_code = 1;//0表示返回成功
+  optional ban_buy_ban_sell_info ban_info = 2;//返回之前设置的信息
+  optional string msg = 3; //当返回有错误的时候，填充错误信息   
+};

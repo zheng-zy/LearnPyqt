@@ -1,0 +1,31 @@
+enum ConnectStatDef
+{
+    DISCONNECT_STAT                       = 0; // 断连状态
+    CONNECTING_STAT                       = 1; // 连接状态
+} 
+
+enum ServerIdentify
+{
+    ROBOT      =  11;  // robot
+    RISK       =  12;  // 风控
+    STOCKSVR   =  13;  // stocksvr 
+    FUTURESVR   =  14;  // futuresvr 
+    STOCK_HSC   =  15;  // 现货券商
+    FUTURE_HSC   =  16;  // 期货券商
+}
+message ConnectStat
+{
+  required ConnectStatDef conn_stat   =  1;  // 与服务器的连接状态
+    required ServerIdentify which_server    =  2;  // 服务器标识
+}
+
+message  ServerMessage
+{
+  repeated ConnectStat server_info     = 1;
+}
+
+message  OrderStat
+{
+  required uint32 order_qty      =  1;  // 与券商的每秒报单数量
+    required ServerIdentify which_server    =  2;  // 服务器标识
+}

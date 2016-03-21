@@ -1,0 +1,127 @@
+enum risk_type {
+//无无风险
+  NOT_NORISK = 0;
+//申购无风险
+  SG_NORISK = 1;
+//赎回无风险
+  SH_NORISK = 2;
+}
+
+enum MarketsInfo {
+  LYMK_MARKET_LIST = 0x0103;
+}
+
+enum MarketSubType{
+  LYMK_SUB_TYPE_CANSEL = 0;
+  LYMK_SUB_TYPE_ADD = 1;
+}
+// 现货行情包子类型
+enum QuoPackType {
+  // 订阅行情数据(通过证卷类型订阅)
+  LYMK_MARKETDATA_REQ_BY_MD_TYPE = 0x0100;
+
+  // 订阅行情数据(通过本日编号)
+  LYMK_MARKETDATA_REQ_BY_IDNUM = 0x0101;
+
+  // 请求代码列表
+  LYMK_CODETABLE_REQ = 0x0200;
+  // 代码表变更
+  LYMK_CODETABLE_CHANGE = 0x0210;
+  // 增加代码索引通知
+  LYMK_CODETABLE_ADD = 0x0220;
+  // 行情数据（盘口）
+  LYMK_MARKETDATA = 0x03F4;
+  // 成交
+  LYMK_TRANSACTION = 0x044D;
+  // 队列
+  LYMK_ORDERQUEUE = 0x044E;
+  // 期货行情数据
+  LYMK_FUTURE = 0x03F8;
+  // 指数
+  LYMK_INDEX = 0x0459;
+  //成交扩展
+  LYMK_TRANSACTION_EX = 0x0451;
+
+  // 代码列表响应
+  LYMK_CODETABLE_RESP = 0x8200;
+  // sub highlimit
+  LYMK_HLIMT_SUB = 0x0801;
+  // sub lowlimit
+  LYMK_LLIMT_SUB = 0x0802;
+  // sub stop
+  LYMK_STOP_SUB = 0x0804;
+  // unsub highlimit
+  LYMK_HLIMT_UNSUB = 0x0811;
+  // unsub lowlimit
+  LYMK_LLIMT_UNSUB = 0x0812;
+  // unsub stop
+  LYMK_STOP_UNSUB = 0x0814;
+}
+
+// 统一心跳订阅与推送包子类型
+enum HeartBeatPackType {
+  // 订阅心跳
+  LYMK_HEARTBEAT_REQ = 0x0FFF;
+  // 心跳
+  LYMK_HEARTBEAT = 0x8FFF;
+}
+
+// 盘前推送服务的包子类型
+enum PreQuoPackType {
+  LYMK_MARKET_OVERVIEW = 0x5100;
+  LYMK_STOP_CHANGE = 0x5200;
+  LYMK_PRECLOSE_CHANGE = 0x5300;
+  LYMK_ETF_BASE_INFO = 0x5400;
+  LYMK_FJJJ_INFO = 0x5600;
+  LYMK_STRUCTURED_FUND_BASE = 0x5700;
+  LYMK_ETF_DIFF_INFO = 0x5800;
+  LYMK_PRE_QUO_SUB = 0x5900;
+  LYMK_TRADEDAY_INFO = 0x5110;
+}
+
+// 净值计算的包子类型
+enum EtfIopvPackType {
+  //请求ETFCODE列表（二级市场代码）
+  LYMK_ETFCODE_REQ = 0x0501;
+  //ETFCODE列表应答
+  LYMK_ETFCODE_RESP = 0x8501;
+  //订阅ETF净值
+  LYMK_ETF_IOPV_SUB = 0x0502;
+  //反订阅ETF净值
+  LYMK_ETF_IOPV_UNSUB = 0x0512;
+  //ETF净值
+  LYMK_ETF_IOPV = 0x8502;
+}
+
+enum EtfNoRiskPackType {
+  // 订阅ETF无风险
+  LYMK_NORISK_ETF_SUB = 0x0601;
+  // 反订阅ETF无风险
+  LYMK_NORISK_ETF_UNSUB = 0x0602;
+  // ETF无风险
+  LYMK_NORISK_ETF = 0x0610;
+  // ETF无风险参数设置
+  LYMK_NORISK_PARAMER_SET = 0x0620;
+}
+
+enum replace_flag
+{
+//替代标示（0：禁止现金替代，
+    RF_FORBIDDEN            = 0;
+    // 1：允许现金替代，
+    RF_ALLOW                = 1;
+    // 2：必须现金替代，
+    RF_MUST                 = 2;
+    // 3：跨市ETF退补现金替代，
+    RF_BETWEEN_WITHDRAWAL   = 3;
+    // 4：跨市ETF必须现金替代，
+    RF_BWTWEEN_MUST         = 4;
+    // 5：跨境ETF退补现金替代，
+    RF_COUNTRY_WITHDRAWAL   = 5;
+    // 6：跨境ETF必须现金替代,
+    RF_COUNTRY_MUST         = 6;
+    // 7:未知）
+    RF_UNKNOW               = 7;
+}
+
+

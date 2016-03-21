@@ -1,0 +1,265 @@
+/*
+4字节    | 2字节    | 2字节    | 16字节     | 
+Uint_32  | Uint_16  | Uint_16  | binary     | binary
+包体长度 | 系统区号 | 包子类型 | requeset_Id | 包体
+*/
+import "trade_db_model.proto";
+package riskmonitor;
+//riskmonitor统一 系统区号 0x0088
+
+//请求账户股票持仓数据 包子类型 0x0020
+message StockPositionReq{
+	required string fund_id = 1;				//账户ID
+}
+
+//账户股票持仓数据返回 包子类型 0x8020 每次推送的都是全量数据
+message StockPositionResp{
+	required string fund_id = 1;				//账户ID
+	repeated liyi.trade_db.StockPosition stock_list = 2;	//股票持仓
+}
+
+//账户头寸信息汇总推送，包子类型 0x0003
+message FundStatus {                                //
+    optional double repo_amount = 1[default=0];                   //逆回购资金
+    optional double buy_freezed_amount = 2;                       //买入冻结资金
+    optional double sell_freezed_amount = 3;                      //卖出冻结资金
+    optional double total_deposit_amount = 4;                     
+    optional double stock_capital_avaliable = 5;
+    optional double stock_hedge_position = 6;                     //现货对冲市值
+    optional double future_capital_avaliable = 7;                 //
+    optional double future_net_volume = 8;
+    optional double future_hedge_position = 9;
+    optional double IC_future_net_volume = 10;
+    optional double IC_future_hedge_position = 11;
+    optional double IH_future_net_volume = 12;
+    optional double IH_future_hedge_position = 13;                     
+    optional double total_hedge_position = 14;
+    optional double adjustment_hedge_position = 15;               //人工头寸调整，人工头寸调整-深圳融券金额+上海融券金额 = 总的人工头寸调整
+    optional double sz_short_selling_amount = 16;                 //深圳融券金额，用来调整深圳头寸占比，同时会影响分级占比
+    optional double sh_short_selling_amount = 17;                 //上海融券金额，用来调整上海头寸占比，同时会影响分级占比
+    optional double rating_fund_of_stock_hedge_position = 18;     //分级基金对冲市值
+    optional double others_of_stock_hedge_position = 19;          //股票、ETF等其它现货对冲市值
+    optional double sz_suspension_market_value = 20;              //深圳停牌市值
+    optional double sh_suspension_market_value = 21;              //上海停牌市值
+    optional double total_suspension_market_value = 22;           //总停牌市值
+    optional double sz_stock_of_stock_market_value = 23;          //深圳股票市值
+    optional double sh_stock_of_stock_market_value = 24;          //上海股票市值
+    optional double subtotal_stock_of_stock_market_value = 25;    //只含计算沪深占比的总股票市值
+    optional double total_stock_of_stock_market_value = 26;       //总股票市值
+    optional double sz_fof_of_stock_market_value = 27;            //深圳分级基金市值（分级基金目前只有深圳才有）
+    optional double sh_fof_of_stock_market_value = 28;            //上海分级基金市值
+    optional double subtotal_fof_of_stock_market_value = 29;      //只含计算分级占比的总分级基金市值
+    optional double total_fof_of_stock_market_value = 30;         //总分级基金市值
+    optional double sz_others_of_stock_market_value = 31;         //深圳其他市值（股票、ETF）
+    optional double sh_others_of_stock_market_value = 32;         //上海其他市值（股票、ETF）
+    optional double subtotal_others_of_stock_market_value = 33;   //只含计算沪深占比的总其他市值（股票、ETF）
+    optional double total_others_of_stock_market_value = 34;      //总其他市值（股票、ETF）
+    optional double sz_stock_hedge_position = 35;                 //只含计算沪深占比的深圳总对冲头寸
+    optional double sh_stock_hedge_position = 36;                 //只含计算沪深占比的上海总对冲头寸
+    optional double subtotal_stock_hedge_position = 37;           //只含计算沪深占比的总现货对冲头寸
+    optional double sz_proportion = 38;                           //深圳对冲头寸占比
+    optional double sh_proportion = 39;                           //上海对冲头寸占比
+    optional double rating_fund_proportion = 40;                  //分级基金对冲头寸占比
+    optional double sz_etf_hedge_position = 41;                   //深圳etf持仓市值
+    optional double sh_etf_hedge_position = 42;                   //上海etf持仓市值
+    optional double z_50_etf_hedge_position = 43;                   //50etf持仓市值
+    optional double z_500_etf_hedge_position = 44;                  //500etf持仓市值
+    optional double sz_A2 = 45;                                   //深市A2暴露
+    optional double sh_A2 = 46;                                   //沪市A2暴露
+    optional double z_50_A2 = 47;                                   //50A2暴露
+    optional double z_500_A2 = 48;                                  //500A2暴露                     
+    optional double inner_stock_hedge_position = 49;              //内部计算持仓，现货总头寸
+    optional double inner_total_hedge_position = 50;              //内部计算持仓总对冲头寸
+    optional double bond_stock_hedge_position = 51;               //国债现货对冲头寸
+    optional double bond_future_net_volume = 52;                  //国债期货仓单
+    optional double bond_future_hedge_position = 53;              //国债期货对冲头寸
+    optional double bond_total_hedge_position = 54;               //国债总对冲头寸
+    optional double gold_stock_hedge_position = 55;               //黄金现货对冲头寸
+    optional double gold_future_net_volume = 56;                  //黄金期货仓单
+    optional double gold_future_hedge_position = 57;              //黄金期货对冲头寸
+    optional double gold_total_hedge_position = 58;               //黄金总对冲头寸
+    optional double auto_adjust_amount = 59;                      //自动调整头寸
+    optional double sz_hedge_alarm = 60;                          //所持（全部）创业板股票占账户资产规模比例报警， 0：正常；1：黄色报警；2：红色报警
+    required string fund_id = 61; 
+}
+
+message DepositStock {
+	required string stock_id = 1;                               //股票代码
+	required string stock_name = 2;                             //股票名称
+	optional int64 volume = 3[default=0];                       //当前持仓
+	optional int64 pre_deposit_volume = 4[default=0];            //历史保证
+	optional int64 deposit_volume = 5[default=0];               //今保证数
+	optional int64 adjust_volume = 6[default=0];                //多空
+	optional int64 can_sell_volume = 7[default=0];              //可卖数
+	optional double adjust_amount = 8[default=0];               //多空市值
+	optional int64 hedge = 9[default=0];                        //今对冲数
+	optional int64 state = 10[default=0];                       //0： 正常，1：涨停, 2: 跌停, 3: 停牌
+	required string info = 11;                                  //涨跌停提示
+	required int64 position_alarm = 12;							//持仓数过多时预警
+}
+
+//账户股票持仓汇总推送0x0002
+message FundDepositStock {
+	required string fund_id = 1;
+	repeated DepositStock stock_list = 2;
+}
+
+//期货持仓汇总推送 包子类型 0x0005
+message FundFutureDeposit{
+	required string fund_id = 1;
+	message FutureDeposit{
+		required string instrument_id = 1;
+		required int64 buy_volume = 2;
+		required int64 sell_volume = 3;
+		required int64 net_volume = 4;
+		required double hedge_position = 5;
+	}
+	repeated FutureDeposit future_list = 2;
+}
+
+//分级持仓推送
+message FundFof{
+	required string fund_id = 1;
+	message FofPosition{
+		required string market = 1;
+		required string fof_stock_id = 2;				//母基金代码
+		required double fof_volume = 3;					//母基金持仓
+		required double fof_can_sell_volume = 4;			//母基金可卖数
+		required double fof_market_value = 5;			//母基金市值
+		required double fof_can_sell_market_value = 6;	//母基金可卖市值
+		required string a_stock_id = 7;					//
+		required double a_volume = 8;
+		required double a_can_sell_volume = 9;
+		required double a_market_value = 10;
+		required double a_can_sell_market_value = 11;
+		required string b_stock_id = 12;					//
+		required double b_volume = 13;
+		required double b_can_sell_volume = 14;
+		required double b_market_value = 15;
+		required double b_can_sell_market_value = 16;
+		required string ab_balance = 17;
+		required double hedge_fof_volume = 18;
+		required double hedge_position = 19;
+		required int64 a_rate = 20;
+		required int64 b_rate = 21;
+		required double fof_pre_close_iopv = 22;			//分级基金IOPV前收价
+	}
+	repeated FofPosition fof_list = 2;
+}
+
+message EtfPosition {
+	required string stock_id = 1;					//ETF代码
+	required string market = 2;						//市场代码
+	required int64 buy_percentage = 3;				//买入百分比
+	required int64 sell_percentage = 4;				//卖出百分比
+	required int64 buy_volume = 5;					//买入总量
+	required int64 sell_volume = 6;					//卖出总量
+	required int64 market_total_volume = 7;			//市场成交总量
+	required int64 volume = 8;						//持仓数
+	required double market_value = 9;				//持仓市值
+	required int64 hedge_position = 10;
+	required int64 can_sell_volume = 11;			//可卖数
+	required double can_sell_market_value = 12;		//可卖市值
+	required int64 purchase_basket_num = 13;		//已申
+	required int64 redeem_basket_num = 14;			//已赎
+}
+
+//账户ETF持仓汇总推送 0x0004
+message FundEtfPosition {
+	required string fund_id = 1;
+	repeated EtfPosition etf_list = 2;
+}
+
+//请求账户数据 0x0001
+message FundReq{
+	repeated string fund_id = 1;
+	required int64 flag = 2;                       //1：订阅 ；0：反订阅
+}
+
+message FundInfo {
+	required string title = 1;                                 //账户名称
+	required string fund_scale = 2;                            //资产规模
+	required string stock_fund_id = 3;                         //现货资金账号
+	required string future_fund_id = 4;                        //期货资金账号
+	required string stock_svr_ip = 5;                          //stock_svr ip
+	required string stock_svr_port = 6;
+	required string future_svr_ip = 7;
+	required string future_svr_port = 8;
+}
+
+//账户信息应答 包子类型 0x8001
+message FundResp {
+	required int64 ret_code = 1;
+	repeated FundInfo fund_list = 2;
+}
+
+//历史保证金 包子类型 0x0014
+message HistoryDeposit{
+    required string fund_id = 1;
+	message stock_deposit{
+	    required string stock_id = 1;
+		required string stock_name = 2;
+		required int64 deposit_volume = 3;
+	}
+	repeated stock_deposit stk_list = 2;
+}
+
+//今对冲数 包子类型 0x0013
+message Hedge{
+    required string fund_id = 1;
+	message stock_hedge{
+	    required string stock_id = 1;
+		required string stock_name = 2;
+		required int64 hedge = 3;
+	}
+	repeated stock_hedge stk_list = 2;
+}
+
+//分级基金前收价 包子类型 0x0012
+message FofPreCloseIopv{
+    message stock_price{
+	    required string stock_id = 1;
+		required double pre_close_iopv = 2;
+	}
+	repeated stock_price stk_list = 1;
+}
+
+//告警信息配置 包子类型 0x0008
+message WarnningConfig{
+	required double stock_amount_for_account_yellow = 1;//单只股票市值（ETF除外）占账户资产规模比例  黄色告警阈值
+	required double stock_amount_for_account_red = 2;//单只股票市值（ETF除外）占账户资产规模比例 红色告警阈值
+	required double gem_stock_amount_for_account_yellow_single = 3;//#单只创业板股票市值占账户资产规模比例 黄色告警阈值
+	required double gem_stock_amount_for_account_red_single = 4;//单只创业板股票市值占账户资产规模比例 红色告警阈值
+	required double gem_stock_amount_for_account_yellow_all = 5;//所持（全部）创业板股票占账户资产规模比例 黄色告警阈值
+	required double gem_stock_amount_for_account_red_all = 6;//所持（全部）创业板股票占账户资产规模比例 红色告警阈值
+	required double total_hedge_position_for_account_yellow = 7;//总头寸（过夜头寸）占账户资产规模比例 黄色告警阈值
+	required double total_hedge_position_for_account_red = 8;//总头寸（过夜头寸）占账户资产规模比例 红色告警阈值
+	required double etf_position_percent_yellow = 9;//单一证券投资基金占该基金最新披露总规模比例 黄色告警阈值
+	required double etf_position_percent_red = 10;//单一证券投资基金占该基金最新披露总规模比例 红色告警阈值
+}
+
+//调整字段PB
+message Adjustment{
+	required string fund_id = 1;
+	required double adjust_value = 2;
+}
+
+//ETF规模 包子类型 0x0007
+message EtfScale{
+	message etf{
+		required string etf_code = 1;
+		required double scale = 2;
+	}
+	repeated etf etf_li = 1;
+}
+
+//撤单比例 包子类型 0x000e
+message CancelRate{
+	required string fund_id = 1;
+	required int64 sz_order_num = 2;
+	required int64 sz_cancel_num = 3;
+	required int64 sh_order_num = 4;
+	required int64 sh_cancel_num = 5;
+}
+
+

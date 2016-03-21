@@ -1,0 +1,194 @@
+import "base.proto";
+import "trade_db_model.proto";
+package future_trade;
+
+/*
+  系统区号：3
+
+  [包子类型]
+  //报单接口
+  单笔委托：0x0202 FutureOrderReq
+  单笔撤单：0x0203 FutureWithdrawReq
+
+  单笔委托响应：0x8202 FutureOrderResp
+  单笔撤单响应：0x8203 FutureOrderResp
+
+  //查询接口
+  委托查询：0x0026 QueryOrderKnockReq
+  资金查询：0x0021 (无包体)
+  持仓查询：0x0025 QueryPositionReq
+  成交回报查询：0x0027 QueryOrderKnockReq
+  期货合约查询：0x0029 (无包体)
+
+  委托响应：0x8026 QueryOrderResp
+  资金响应：0x8021 QueryAssetResp
+  持仓响应：0x8025 QueryPositionResp
+  成交回报响应：0x8027 QueryKnockResp
+  期货合约响应：0x8029 QueryInstrumentResp
+
+  //订阅与推送接口
+  订阅请求：0x0035 SubTradeMsgReq
+  订阅响应：0x8035 SubTradeMsgResp
+  (可订阅委托、资金、持仓、成交信息)
+
+  全量委托推送：0x0040 PushOrder
+  资金推送：0x0036 liyi.trade_db.FutureAsset
+  全量持仓推送：0x0041 PushPosition
+  全量成交回报推送：0x0042 PushKnock
+  全量合约信息推送：0x0043 PushInstrument
+
+  单条委托推送：0x0037 liyi.trade_db.FutureOrder
+  单条持仓推送：0x0038 liyi.trade_db.FuturePosition
+  单条成交回报推送：0x0039 liyi.trade_db.FutureKnock
+
+  //风控相关 参考trade_risk_ctrl.proto
+
+  //登录请求：0x0001 LoginReq
+  //登录响应：0x8001 LoginResp
+
+  //错误包
+  出错通知：0x8999 ErrNotify
+
+  //ret_code
+  0：成功
+  -1：失败
+  -2：初始化未完成
+*/
+
+/******************************************
+ * 查询资金
+ ******************************************/
+message QueryAssetResp {
+  required int32 ret_code = 1; //错误码
+  optional string ret_message = 2; //错误信息
+  optional liyi.trade_db.FutureAsset future_asset = 3; //资金信息
+}
+
+/******************************************
+ * 查询持仓
+ ******************************************/
+message QueryPositionReq {
+  optional string instrument_id = 1; //证券代码，不赋值则查询账户总持仓
+}
+
+message QueryPositionResp {
+  required int32 ret_code = 1; //错误码
+  optional string ret_message = 2; //错误信息
+  repeated liyi.trade_db.FuturePosition future_position = 3; //期货持仓信息
+}
+
+/************************************************************
+ * 查询委托或成交回报 0x0026 0x0027 不加包体则查询所有委托或成交回报
+ ************************************************************/
+//查询委托请求 0x0026
+//查询成交回报请求 0x0027
+message QueryOrderKnockReq {
+  optional string order_no = 1; //订单号
+}
+
+//查询委托响应
+message QueryOrderResp {
+  required int32 ret_code = 1; //错误码
+  optional string ret_message = 2; //错误信息
+  repeated liyi.trade_db.FutureOrder future_order = 4; //委托信息
+}
+
+//查询成交回报响应
+message QueryKnockResp {
+  required int32 ret_code = 1;                 //错误码
+  optional string ret_message = 2;             //错误信息
+  repeated liyi.trade_db.FutureKnock future_knock = 4;       //期货成交信息
+}
+
+/************************************************************
+ * 订阅委托、成交明细、资金、持仓信息 0x0035
+ ************************************************************/
+//订阅请求
+message SubTradeMsgReq {
+  required int32 type = 1;             // 订阅类型：1:委托，2:成交，4:资金，8:持仓，16:合约信息
+}
+
+//订阅响应
+message SubTradeMsgResp {
+  required int32  ret_code = 1;            //错误码
+  optional string ret_message = 2;            //错误信息
+}
+
+/******************************************
+ * 查询期货合约信息
+ ******************************************/
+// 请求(无包体)
+
+// 响应
+message QueryInstrumentResp {
+  required int32 ret_code = 1;        // 错误码
+  optional string ret_message = 2;        // 错误信息
+  repeated liyi.trade_db.FutureInstrument future_instrument_infos = 3;        // 合约信息
+}
+
+/******************************************
+ * 错误通知
+ ******************************************/
+//通知 0x8999
+message ErrNotify {
+  required int32 ret_code = 1;
+  optional string ret_message = 2;
+}
+
+/*******************************************
+ * 单笔委托
+ *******************************************/
+//报单请求：0x0202
+message FutureOrderReq {
+  required string code = 1; //instrument id
+  required int64 price = 2; //扩大10000倍后的值
+  required uint32 qty = 3; //数量
+  required int32 bs_flag = 4; //'0': buy  '1': sell
+  optional int32 open_close_flag = 5[default=-1];  //开平仓标记 '0':开仓 '1':平仓 '2'：强平 '3'：平今 '4'：平昨 '5'：强减 '6'：本地强平  -1：自动计算开平仓
+  optional int32 price_type  = 6;        //价格类型，保留字段，现阶段都是限价指令(Limit Orders (LMT))
+  // '1':任意价 '2'：限价 '3':最优价 '4':最新价 '5':最新价浮动上浮1个ticks
+  // '6'：最新价浮动上浮2个ticks '7'：最新价浮动上浮3个ticks
+  // '8'：卖一价 '9'：卖一价浮动上浮1个ticks 'A':卖一价浮动上浮2个ticks
+  // 'B':卖一价浮动上浮3个ticks 'C':买一价 'D':买一价浮动上浮1个ticks
+  // 'E':买一价浮动上浮2个ticks 'F':买一价浮动上浮3个ticks
+  optional bytes policy_id = 7;     //策略Id
+  required string trader_id = 8;    //交易员ID
+  optional string trader_ip = 9;    //交易员IP
+  optional client_type  client_type = 10;        //交易客户端类型
+}
+
+//撤单请求：0x0203
+message FutureWithdrawReq {
+  required string order_no = 1;
+  optional bytes policy_id = 2;       //策略Id
+  optional string trader_id = 3;    //交易员ID
+  optional string trader_ip = 4;    //交易员IP
+}
+
+//报单响应：0x8202
+//撤单响应：0x8203
+message FutureOrderResp {
+  required int32 ret_code = 1;
+  optional string ret_message = 2;
+  optional string order_no = 3;
+  optional bytes policy_id = 4;
+}
+
+/*******************************************
+ * 推送
+ *******************************************/
+message PushOrder {
+  repeated liyi.trade_db.FutureOrder future_order = 1;
+}
+
+message PushKnock {
+  repeated liyi.trade_db.FutureKnock future_knock = 1;
+}
+
+message PushPosition {
+  repeated liyi.trade_db.FuturePosition future_position = 1;
+}
+
+message PushInstrument {
+  repeated liyi.trade_db.FutureInstrument future_instrument = 1;
+}

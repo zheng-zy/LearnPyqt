@@ -1,0 +1,149 @@
+package ly.quota;
+
+// ETFCODE列表应答(LYMK_ETFCODE_RESP)
+message EtfCodeResp
+{
+  repeated string etfcode        = 1;   // 二级市场代码
+}
+
+// 订阅ETF净值(LYMK_ETF_IOPV_SUB)
+message EtfIopvSub
+{
+  repeated string etfcode        = 1;   // 二级市场代码
+}
+
+// 反订阅ETF净值(LYMK_ETF_IOPV_UNSUB)
+message EtfIopvUnSub
+{
+  repeated string etfcode        = 1;   // 二级市场代码
+}
+
+// ETF净值(LYMK_ETF_IOPV)
+message EtfIopv
+{
+  required uint64 seq_id         = 1;   // 序列号
+  required int32  idnum          = 2;   // 本日编号(交易所编号*100 + 交易所编号)
+  required string etfcode        = 3;   // 二级市场代码
+  required double buy_iopv       = 4;   // 买一净值（含成本）
+  required double sell_iopv      = 5;   // 卖一净值（含成本）
+  required double last_iopv      = 6;   // 最新价净值
+  required double sg_zyj         = 7;   // 申购折溢价
+  required double sh_zyj         = 8;   // 赎回折溢价
+  required int32  exch_time      = 9;   // 交易所更新时间（HHMMSSmmm）
+  optional int32  pub_time       = 10;  // 净值发布时间（HHMMSSmmm）
+}
+
+// ETF无风险参数设置
+message SetEtfSigParamer
+{
+  required double obj_profit   = 1;  // 目标利润
+  required double obj_qty      = 2;  // 篮子个数
+}
+
+// ETF无风险
+message EtfSignal 
+{
+  required int32  idnum          = 1;  // 本日编号(交易所编号*100 + 交易所编号)
+  required string etfcode        = 2;  // 二级市场代码
+  required int32  quo_time       = 3;  // 行情时间
+  required int32  iopv_time      = 4;  // 净值时间
+  required double basket_profit  = 5;  // 申购赎回实际利润
+  required double basket_qty     = 6;  // 实际篮子个数
+  required int32  risk_flag      = 7;  // 1:redeem - 申购机会 2:purchase - 赎回机会  0:无机会
+  optional int32  pub_time       = 8;  // 无风险发布时间（HHMMSSmmm）
+}
+
+
+
+message EtfBasketSockList
+{
+	required string stkid    = 1; // 股票代码
+	required double ygzdf    = 2; // 预估涨跌幅
+	required double stocksz  = 3; // 成份股市值
+	required double ygds     = 4; // 预估点数
+	optional uint32 execute_qty = 5;   //成分股数量
+	optional int32  stat        = 6;   // 'H':涨停 'L':跌停 'S':停牌 'N':正常
+	optional double zdf         = 7;   // 涨跌幅
+}
+
+message StockBasketPercent
+{
+	required string stkid    = 1; // 股票代码
+	required double lzzb     = 2; // 篮子占比
+}
+
+// 请求申购赎回折算、涨跌停市值、预估点数、篮子占比
+message EtfSignalCalReq
+{
+  	required string etfcode       = 1;    
+}
+
+// 返回申购赎回折算、涨跌停市值、预估点数、篮子占比
+message EtfSignalCalResp
+{
+  	required string etfcode        						= 1;   // 二级市场代码
+  	required string etf_p_r_code   						= 2;   // 一级市场代码
+  	required double zt_sz_value							= 3;	//  涨停深圳市值
+	required double zt_sh_value							= 4;	// 涨停上海市值
+	required double zt_kk_value							= 5;	// 涨停快开
+  	required double dt_sz_value							= 6;	//  跌停深圳市值
+	required double dt_sh_value							= 7;	// 跌停上海市值
+	required double dt_kk_value							= 8;	// 跌停快开市值
+  	required double stop_sz_value						= 9;	//  停牌深圳市值
+	required double stop_sh_value						= 10;	// 停牌上海市值
+	required double sg_tp_sz_value						= 11;	// 申购深圳停牌市值
+	required double sg_tp_sh_value						= 12;	// 申购上海停牌总市值
+	required double sh_tp_sz_value						= 13;	// 赎回深圳停牌市值
+	required double sh_tp_sh_value						= 14;	// 赎回上海停牌市值
+	required double sg_zt_sz_value						= 15;	// 申购深圳涨停市值
+	required double sg_zt_sh_value						= 16;	// 申购上海涨停市值
+	required double sh_dt_sz_value						= 17;	// 赎回深圳跌停市值
+	required double sh_dt_sh_value						= 18;	// 赎回上海跌停市值
+	required double show_cash_replace_value				= 19;	// 现金替代比例上限市值
+	required uint32	forbid_cash_num						= 20;  // 禁止现金替代数
+	repeated EtfBasketSockList stocklist 				= 21;  // 股票列表
+	repeated StockBasketPercent lzzb	 				= 22;  // 篮子占比  
+  	optional int32  pub_time       						= 23;  // 无风险发布时间（HHMMSSmmm）
+}
+
+// 返回非停牌必须现金替代信息
+message EtfSignalNoStopMustCashInfoResp
+{
+  	required string etfcode        						= 1;   // 二级市场代码
+  	required string etf_p_r_code   						= 2;   // 一级市场代码
+  	required double nostop_cash_replace_strike     		= 3;  // 非停牌必须现金替代打点
+  	required double nostop_cash_value_strike     		= 4;  // 非停牌必须现金替代市值
+  	optional int32  pub_time       						= 5;  // 无风险发布时间（HHMMSSmmm）
+}
+
+// EtfSignal模块心跳包
+message EtfSignalHeartBeat
+{
+  	required uint32 src       							= 1;   // 1 为请求，2返回
+  	required uint32 id       							= 2;   // id为递增数字，请求返回要一致
+}
+
+// 返回etf涨停，涨停快开，涨停打开，跌停，跌停快开，跌停打开几种状态
+// funcid: 0x0724
+message EtfZDSignalReq
+{
+  	required string etfcode       = 1;    
+}
+
+message EtfZDStockList
+{
+	required string stkid    = 1; // 股票代码
+	required int32  stat     = 2;   // 'H':涨停 'L':跌停 'S':停牌 'N':正常 'H+K':涨停快开 'L+K':跌停快开
+}
+
+// funcid: 0x8724
+message EtfZDSignalResp
+{
+  	required string etfcode        						= 1;   // 二级市场代码
+  	required string etf_p_r_code   						= 2;   // 一级市场代码
+	repeated EtfZDStockList list		 				= 3;  // 当前涨跌停股票状态，第一次全部，其余每次只有更新状态的一只股票
+	repeated EtfZDStockList zt_kk_list		 			= 4;  // 当前所有涨停快开股票
+	repeated EtfZDStockList dt_kk_list		 			= 5;  // 当前所有跌停快开股票
+  	optional int32  pub_time       						= 6;  // 发布时间（HHMMSSmmm）
+}
+

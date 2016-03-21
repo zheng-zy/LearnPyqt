@@ -1,0 +1,67 @@
+package trade_risk_ctrl;
+
+//禁止或恢复资金账户交易请求0x0101
+message StopAllowTradingReq
+{
+    required int32 stop_allow_type  = 1;     // 禁止允许类型：0x0000:允许买卖 0x0001:禁止买允许卖 0x0002:禁止卖允许买 0x0003:禁止买卖
+}
+
+//禁止或恢复资金账户交易响应0x8101
+message StopAllowTradingResp {
+	required int32  ret_code    = 1;         // 错误码
+	optional string ret_message = 2;         // 错误信息
+}
+
+//风控撤单交易请求0x000b
+message CancelTradingReq
+{
+    required int32 cancel_type  = 1;     // 撤单类型：0x0001:买全撤 0x0002:卖全撤 0x0003:全部撤单
+}
+
+//风控撤单交易响应0x800b
+message CancelTradingResp {
+	required int32  ret_code    = 1;         // 错误码
+	optional string ret_message = 2;         // 错误信息
+}
+
+// 查询资金账户状态请求无包体：0x0102，响应包0x8102
+message QuerySystemStatusResp
+{
+    required int32  ret_code    = 1;    // 错误码
+	optional string ret_message = 2;    // 错误信息
+    optional int32  buy_status  = 3;    // 0:允许买  1:禁止买
+    optional int32  sell_status = 4;    // 0:允许卖  1:禁止卖
+}
+
+// 查询交易员状态请求：0x0104
+message QueryTraderStatusReq
+{
+    optional string  trader_id  = 1;    // 为空查询所有交易状态
+}
+
+// 查询交易员状态响应：0x8104
+message QueryTraderStatusResp
+{
+    required int32  ret_code            = 1;         // 错误码
+	optional string ret_message         = 2;         // 错误信息
+    message TraderStatus
+    {
+        required string  trader_id      = 1;     
+        optional int32   buy_status     = 2;    // 0:允许买  1:禁止买
+        optional int32   sell_status    = 3;    // 0:允许卖  1:禁止卖
+    }
+    repeated TraderStatus trader_list   = 3;
+}
+
+// 设置交易员状态请求0x0103
+message SetTraderStatusReq
+{
+    required string trader_id        = 1;
+    required int32  stop_allow_type  = 2;    // 禁止允许类型：0x0000:允许买卖 0x0001:禁止买允许卖 0x0002:禁止卖允许买 0x0003:禁止买卖
+}
+
+// 设置交易员状态响应0x8103
+message SetTraderStatusResp {
+	required int32  ret_code    = 1;         // 错误码
+	optional string ret_message = 2;         // 错误信息
+}
