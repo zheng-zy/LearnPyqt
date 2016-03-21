@@ -1,11 +1,3 @@
-#vn.demo介绍
-该demo主要用于展示如何使用vn.py框架开发交易平台，使用了vn.event和vn.lts模块。
-
-##如何使用
-常规用户可以直接运行exe文件夹下的demoMain.exe。
-
-对开发有兴趣的用户需要根据vnpy.org的教程3安装相关的开发环境，然后通过demoMain.py和demoMain.pyw（无cmd界面）运行。
-
 ##实现功能
 demo的实现参考了盈佳和尔易的LTS交易平台，功能如下：
 
@@ -22,19 +14,6 @@ demo的实现参考了盈佳和尔易的LTS交易平台，功能如下：
  - demoMain.py包含了程序的主函数入口，双击运行
  - demoMain.pyw功能和demoMain.py一样，双击时会自动调用pythonw.exe运行（无cmd界面）
 
-##nuitka编译说明
-要执行nuikta编译，请在本文件夹下打开cmd，并输入以下命令：
 
-nuitka --standalone --windows-disable-console --icon=C:\vn.demo\vnpy.ico demoMain.py
-
-其中C:\vn.demo\vnpy.ico需要修改为用户vn.demo文件夹的路径。
-
-##LTS测试服务器地址
-
-**行情**
-tcp://211.144.195.163:34513
-
-**交易**
-tcp://211.144.195.163:34505
 
 
