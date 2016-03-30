@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockWidget</class>
+ <widget class="QDockWidget" name="DockWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>938</width>
+    <height>769</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>篮子买卖</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QPushButton" name="pb_load">
+            <property name="text">
+             <string>导入篮子</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_tdsx_name">
+            <property name="text">
+             <string>现金替代上限：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_tdsx_data">
+            <property name="text">
+             <string>50%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_ccbfb_name">
+            <property name="text">
+             <string>持仓百分比：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_ccbfb_data">
+            <property name="text">
+             <string>50%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_kshs_name">
+            <property name="text">
+             <string>可赎回数：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_kshs_data">
+            <property name="text">
+             <string>5</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="4">
+           <widget class="QPushButton" name="pb_redeem">
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color:rgb(1, 208, 25); }
+</string>
+            </property>
+            <property name="text">
+             <string>赎回</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="pb_basket_buy">
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color: rgb(255, 85, 0); }</string>
+            </property>
+            <property name="text">
+             <string>篮子买入</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="4">
+           <widget class="QPushButton" name="pb_subscribe">
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color: rgb(255, 85, 0); }</string>
+            </property>
+            <property name="text">
+             <string>申购</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="pb_basket_sell">
+            <property name="styleSheet">
+             <string notr="true">QPushButton { background-color:rgb(1, 208, 25); }
+</string>
+            </property>
+            <property name="text">
+             <string>篮子卖出</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="5">
+           <widget class="QPushButton" name="pb_complement">
+            <property name="text">
+             <string>补足</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_6">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="6">
+           <widget class="QPushButton" name="pb_replace_complement">
+            <property name="text">
+             <string>替代补足</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="7">
+           <widget class="QPushButton" name="pb_refresh">
+            <property name="text">
+             <string>刷新</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cb_stock_name">
+            <property name="editable">
+             <bool>false</bool>
+            </property>
+            <property name="maxVisibleItems">
+             <number>10</number>
+            </property>
+            <property name="frame">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="5">
+           <widget class="QPushButton" name="pb_cancel">
+            <property name="text">
+             <string>撤单</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="7">
+           <widget class="QPushButton" name="pb_auto_cancel_supplement">
+            <property name="text">
+             <string>自动撤补</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="l_stock_name">
+            <property name="text">
+             <string>证券代码</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="le_order_num"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="l_order_num">
+            <property name="text">
+             <string>委托数量</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="6">
+           <widget class="QPushButton" name="pb_supplement">
+            <property name="text">
+             <string>补单</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="pb_choose_basket">
+            <property name="text">
+             <string>选择未完成篮子</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_basket_dirt_name">
+            <property name="text">
+             <string>篮子买卖方向：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_basket_dirt_data">
+            <property name="text">
+             <string>买入</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_cur_policy_id_name">
+            <property name="text">
+             <string>当前策略ID：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="l_cur_policy_id_data">
+            <property name="text">
+             <string>0001</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="3">
+         <widget class="QLabel" name="l_deal_iopv_name_2">
+          <property name="text">
+           <string>万</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pb_usable_fund_name">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+            <underline>true</underline>
+           </font>
+          </property>
+          <property name="mouseTracking">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton { border-radius: 3px; color: rgb(1, 170, 255); }
+QPushButton:hover { background-color: rgb(89, 89, 89); }
+ </string>
+          </property>
+          <property name="text">
+           <string>可用资金：</string>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="l_deal_money_name">
+          <property name="text">
+           <string>已成金额：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="l_estimate_cost_name">
+          <property name="text">
+           <string>预估成本：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLabel" name="l_deal_iopv_name_4">
+          <property name="text">
+           <string>万</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="l_usable_fund_data">
+          <property name="text">
+           <string>11,111.59</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLabel" name="l_deal_iopv_name_5">
+          <property name="text">
+           <string>万</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="l_percent_name">
+          <property name="text">
+           <string>完成百分比：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLabel" name="l_percent_data">
+          <property name="text">
+           <string>30%</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="l_deal_iopv_name_3">
+          <property name="text">
+           <string>万</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="l_deal_iopv_name">
+          <property name="text">
+           <string>已成净值：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="l_deal_money_data">
+          <property name="text">
+           <string>1,234.01</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLabel" name="l_deal_iopv_data">
+          <property name="text">
+           <string>2.12938</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="l_estimate_cost_data">
+          <property name="text">
+           <string>12.00</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <spacer name="horizontalSpacer_8">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="4">
+         <spacer name="horizontalSpacer_10">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QTableWidget" name="tv_basket_list">
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>70</number>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>代码</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>名称</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>数量</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>替代标记</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>溢价比例</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>替代金额</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>状态</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>持仓数</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>可卖数</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>缺口量</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>今买入</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>盘口</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>盘口价</string>
+         </property>
+        </column>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
